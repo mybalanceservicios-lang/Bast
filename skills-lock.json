@@ -25,6 +25,12 @@
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "4eabc66183767153e404b39d1b839b1c37f2d82d86f0a0d7e880a579d8d62336"
     },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/impeccable/SKILL.md",
+      "computedHash": "37354ec7825c618102ef4c03062c866f95752d799f7825da69438c697e0ee05e"
+    },
     "napkin": {
       "source": "github/awesome-copilot",
       "sourceType": "github",
