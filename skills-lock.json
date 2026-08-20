@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/caveman/SKILL.md",
       "computedHash": "48646eeec87b27067502d8bd450484faf08af588df783706b1571ee72f2d918c"
+    },
+    "napkin": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/napkin/SKILL.md",
+      "computedHash": "333e4b2870be463bb1bdc84862d152800c44ccbfe3758157b8cbee9c2538db7a"
     }
   }
 }
