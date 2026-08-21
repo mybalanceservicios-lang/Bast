@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>BAST · Portal de Profes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070908; --bg-2:#0C100E; --surface:#111614; --surface-2:#161C19;
+  --ink:#EAF3EE; --ink-2:#9DB2A8; --ink-3:#63736C;
+  --line:#1D2521; --line-2:#161D18;
+  --mint:#7DE9C2; --mint-2:#38C9A0; --mint-deep:#1E9E7C; --mint-soft:#0E241C;
+  --red:#E9737D; --red-soft:#2A1416;
+  --disp:"Big Shoulders Display","Impact","Arial Narrow",sans-serif;
+  --body:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.5;font-weight:400;-webkit-font-smoothing:antialiased}
+.disp{font-family:var(--disp);text-transform:uppercase;letter-spacing:.01em;font-weight:900}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--body);cursor:pointer}
+
+/* ---------- botón firma del sitio (simple, sin animación rota) ---------- */
+.sb{display:inline-flex;border-radius:11px;border:1.5px solid var(--mint-deep);background:var(--surface-2)}
+.sb .inner{display:inline-flex;align-items:center;justify-content:center;gap:9px;color:var(--ink);font-weight:800;font-size:15px;padding:12.5px 26px;border-radius:9px;letter-spacing:.01em;transition:.15s;width:100%}
+.sb.fill{background:var(--mint);border-color:var(--mint)}
+.sb.fill .inner{color:#04140F}
+.sb:not(.fill):hover{border-color:var(--mint);background:var(--mint-soft)}
+.sb:not(.fill):hover .inner{color:var(--mint)}
+.sb.fill:hover{background:#fff;border-color:#fff}
+.sb:disabled{opacity:.4;cursor:not-allowed}
+
+/* ---------- fondo con aurora sutil (login) ---------- */
+.aurora-bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+.aurora-bg::before,.aurora-bg::after{content:"";position:absolute;width:60vw;height:60vw;border-radius:50%;filter:blur(90px);opacity:.16}
+.aurora-bg::before{background:var(--mint);top:-20%;left:-10%;animation:drift1 16s ease-in-out infinite alternate}
+.aurora-bg::after{background:var(--mint-deep);bottom:-25%;right:-10%;animation:drift2 18s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(6%,8%)}}
+@keyframes drift2{to{transform:translate(-6%,-6%)}}
+
+/* ================= LOGIN ================= */
+#view-login{min-height:100vh;display:grid;place-items:center;position:relative;padding:24px}
+.login-card{position:relative;z-index:1;width:100%;max-width:400px;background:rgba(17,22,20,.86);border:1px solid var(--line);border-radius:22px;padding:38px 34px;backdrop-filter:blur(10px)}
+.login-logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:900;font-size:28px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.login-logo .dot{width:9px;height:9px;border-radius:2px;background:var(--mint);transform:rotate(45deg)}
+.login-eyebrow{display:flex;align-items:center;gap:9px;color:var(--mint);font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin:22px 0 6px}
+.login-eyebrow::before{content:"";width:22px;height:2px;background:var(--mint)}
+.login-card h1{font-family:var(--disp);font-weight:900;font-size:34px;line-height:1.15;margin:0 0 8px;text-transform:uppercase}
+.login-card p.sub{color:var(--ink-2);font-size:14.5px;margin:0 0 26px}
+label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+.field{margin-bottom:16px}
+.field input{width:100%;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);border-radius:11px;padding:13px 14px;font-family:var(--body);font-size:15px;transition:.15s}
+.field input:focus{outline:none;border-color:var(--mint-deep);background:#12211B}
+.login-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink-2);margin:2px 0 22px}
+.login-row a{color:var(--mint-2);font-weight:600}
+.login-row label{display:flex;align-items:center;gap:7px;text-transform:none;font-weight:500;font-size:13px;color:var(--ink-2);margin:0}
+.login-foot{margin-top:22px;text-align:center;font-size:13px;color:var(--ink-3)}
+.err{display:none;background:var(--red-soft);border:1px solid #4A2226;color:var(--red);font-size:13px;font-weight:600;padding:10px 13px;border-radius:10px;margin-bottom:16px}
+
+/* ================= APP SHELL ================= */
+#view-app{display:none}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(7,9,8,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:0 26px;height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.tb-logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:900;font-size:22px;letter-spacing:.1em}
+.tb-logo .dot{width:7px;height:7px;background:var(--mint);border-radius:2px;transform:rotate(45deg)}
+.tb-nav{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);padding:5px;border-radius:12px}
+.tb-nav button{background:none;border:none;color:var(--ink-2);font-weight:700;font-size:13.5px;padding:9px 16px;border-radius:9px;transition:.15s}
+.tb-nav button.active{background:var(--mint);color:#04140F}
+.tb-user{display:flex;align-items:center;gap:12px}
+.tb-avatar{width:38px;height:38px;border-radius:10px;background:var(--mint-soft);border:1px solid var(--mint-deep);display:grid;place-items:center;color:var(--mint);font-weight:800;font-size:14px}
+.tb-user-name{font-size:13.5px;font-weight:700;line-height:1.2}
+.tb-user-role{font-size:11.5px;color:var(--ink-3)}
+.logout{color:var(--ink-3);font-size:12.5px;font-weight:700;border:1px solid var(--line);padding:8px 12px;border-radius:9px;background:var(--surface);transition:.15s}
+.logout:hover{color:var(--red);border-color:#4A2226}
+
+.wrap{max-width:1180px;margin:0 auto;padding:40px 26px 90px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:14px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:9px;color:var(--mint);font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.tag::before{content:"";width:22px;height:2px;background:var(--mint)}
+.page-head h2{font-family:var(--disp);font-weight:900;font-size:clamp(30px,4vw,44px);margin:10px 0 0;text-transform:uppercase;line-height:1.1}
+.page-sub{color:var(--ink-3);font-size:13.5px;margin:16px 0 24px}
+
+/* ---------- barra de selección múltiple ---------- */
+.selbar{display:none;justify-content:space-between;align-items:center;background:var(--mint-soft);border:1px solid var(--mint-deep);border-radius:14px;padding:12px 18px;margin-bottom:20px;gap:14px;flex-wrap:wrap}
+.selbar span{color:var(--mint);font-weight:800;font-size:13.5px}
+.selbar .btns{display:flex;gap:10px}
+.selbar .ghost-btn{width:auto;padding:11px 16px}
+.selbar .sb .inner{padding:11px 20px}
+
+/* ---------- dashboard: cards de rutinas ---------- */
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.rcard{background:rgba(17,22,20,.86);border:1px solid var(--line);border-radius:18px;padding:24px;position:relative;transition:.15s}
+.rcard:hover{border-color:var(--mint-deep)}
+.rcard.selected{border-color:var(--mint);box-shadow:0 0 0 1px var(--mint) inset}
+.rcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}
+.rcard-top .badges{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.rcheck{display:flex;align-items:center}
+.rcheck input{width:18px;height:18px;accent-color:var(--mint);cursor:pointer}
+.rcard-badge{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:5px 10px;border-radius:20px;background:var(--mint-soft);color:var(--mint);border:1px solid var(--mint-deep);white-space:nowrap}
+.rcard-badge.gray{background:var(--surface-2);color:var(--ink-2);border-color:var(--line)}
+.rcard h3{font-family:var(--disp);font-weight:900;font-size:22px;margin:0 0 6px;text-transform:uppercase;line-height:1.15}
+.rcard .meta{color:var(--ink-2);font-size:13px;display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.rcard .meta span{display:flex;align-items:center;gap:6px}
+.rcard-actions{display:flex;gap:8px}
+.mini-btn{flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);transition:.15s}
+.mini-btn:hover{border-color:var(--mint-deep);color:var(--ink)}
+.mini-btn.proj{background:var(--mint);color:#04140F;border-color:var(--mint);flex:1.3}
+.mini-btn.proj:hover{background:#fff}
+.new-card{border:1.5px dashed var(--line);border-radius:18px;display:grid;place-items:center;padding:24px;min-height:190px;color:var(--ink-3);transition:.15s;background:transparent}
+.new-card:hover{border-color:var(--mint-deep);color:var(--mint)}
+.new-card .plus{width:44px;height:44px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;margin-bottom:10px}
+
+/* ---------- editor de rutina ---------- */
+.ed-grid{display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start}
+.panel{background:rgba(17,22,20,.86);border:1px solid var(--line);border-radius:20px;padding:28px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field select{width:100%;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);border-radius:11px;padding:13px 14px;font-family:var(--body);font-size:15px}
+
+.ex-header-row{display:flex;gap:14px;align-items:center;padding:0 16px;margin:4px 0 6px}
+.ex-header-row .ex-handle-sp{width:22px;flex-shrink:0}
+.ex-header-row .ex-fields{padding:0}
+.ex-header-row .ex-fields span{font-size:10.5px;font-weight:800;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+.ex-header-row .ex-del-sp{width:18px;flex-shrink:0}
+
+.ex-list{display:flex;flex-direction:column;gap:12px;margin-top:0}
+.ex-item{display:flex;gap:14px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.ex-handle{color:var(--ink-3);font-size:13px;font-weight:800;font-family:var(--disp);padding-top:10px;width:22px;text-align:center}
+.ex-fields{flex:1;display:grid;grid-template-columns:2fr .85fr .85fr .95fr .75fr;gap:10px}
+.ex-fields input{background:var(--bg-2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 11px;font-family:var(--body);font-size:13.5px;width:100%}
+.ex-fields input::placeholder{color:var(--ink-3)}
+.ex-fields input.block-input{text-align:center;font-weight:800;text-transform:uppercase}
+.ex-del{color:var(--ink-3);background:none;border:none;font-size:18px;padding-top:8px;transition:.15s}
+.ex-del:hover{color:var(--red)}
+.add-ex{margin-top:14px;width:100%;border:1.5px dashed var(--line);border-radius:12px;padding:13px;background:none;color:var(--ink-2);font-weight:700;font-size:13.5px;transition:.15s}
+.add-ex:hover{border-color:var(--mint-deep);color:var(--mint)}
+
+.side-title{font-family:var(--disp);font-weight:900;font-size:17px;letter-spacing:.03em;margin:0 0 14px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;padding:10px 0;border-bottom:1px solid var(--line-2)}
+.stat-row b{color:var(--mint);text-align:right}
+.stat-note{font-size:11px;color:var(--ink-3);margin:-6px 0 4px;text-align:right}
+.ed-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.ghost-btn{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font-weight:700;font-size:13.5px;transition:.15s}
+.ghost-btn:hover{border-color:var(--mint-deep);color:var(--ink)}
+
+/* ================= PROYECCIÓN (pantalla TV) — tablero estático ================= */
+#view-proj{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;color:var(--ink)}
+.proj-bg{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% -10%,var(--mint-soft) 0%,var(--bg) 55%);z-index:0}
+.proj-in{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;padding:4vh 4.5vw}
+.proj-top{display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.proj-logo{display:flex;align-items:center;gap:12px;font-family:var(--disp);font-weight:900;font-size:24px;letter-spacing:.12em}
+.proj-logo .dot{width:9px;height:9px;background:var(--mint);border-radius:2px;transform:rotate(45deg)}
+.proj-clock{flex:1;text-align:center;font-family:var(--disp);font-weight:900;font-size:clamp(22px,2.6vw,36px);letter-spacing:.06em;color:var(--ink-2)}
+.proj-exit{color:var(--ink-3);font-size:12.5px;font-weight:700;border:1px solid var(--line);padding:9px 16px;border-radius:9px;background:rgba(17,22,20,.7);flex-shrink:0}
+.proj-exit:hover{color:var(--ink)}
+
+.proj-board{flex:1;display:grid;gap:22px;margin-top:3.5vh;min-height:0}
+.proj-col{background:rgba(17,22,20,.72);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;min-height:0;min-width:0}
+.proj-col-head{flex-shrink:0;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.proj-col-head-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.proj-col-head h3{font-family:var(--disp);font-weight:900;font-size:clamp(20px,1.8vw,28px);margin:0;text-transform:uppercase;line-height:1.15}
+.proj-col-head .day{color:var(--ink-3);font-size:12.5px;margin-top:6px}
+.proj-ex-list{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:calc(9px * var(--s,1))}
+.proj-ex-list.multicol{display:block;column-gap:16px}
+.proj-ex-list.multicol .proj-ex,
+.proj-ex-list.multicol .proj-block{break-inside:avoid;-webkit-column-break-inside:avoid;margin-bottom:calc(9px * var(--s,1))}
+.proj-ex{display:flex;align-items:center;gap:calc(12px * var(--s,1));padding:calc(11px * var(--s,1)) calc(13px * var(--s,1));border-radius:12px;background:var(--surface-2);border:1px solid var(--line-2);break-inside:avoid}
+.proj-ex-num{font-family:var(--disp);font-weight:900;font-size:calc(15px * var(--s,1));color:var(--mint);width:calc(20px * var(--s,1));text-align:center;flex-shrink:0}
+.proj-ex-name{flex:1;font-weight:700;font-size:calc(14px * var(--s,1));line-height:1.25;min-width:0}
+.proj-ex-meta{display:flex;gap:6px;flex-shrink:0}
+.proj-chip{font-size:calc(11px * var(--s,1));font-weight:800;padding:calc(5px * var(--s,1)) calc(8px * var(--s,1));border-radius:7px;background:var(--mint-soft);color:var(--mint);border:1px solid var(--mint-deep);white-space:nowrap}
+.proj-chip.time{background:var(--surface);color:var(--ink-2);border-color:var(--line)}
+.proj-empty{margin:auto;text-align:center;color:var(--ink-3)}
+.proj-empty .disp{font-size:28px;color:var(--ink-2);margin-bottom:8px}
+
+/* bloques de ejercicios (superset / intercalados) */
+.proj-block{border:1.5px dashed var(--mint-deep);border-radius:14px;padding:calc(10px * var(--s,1)) calc(10px * var(--s,1)) calc(2px * var(--s,1));background:rgba(125,233,194,.03);break-inside:avoid}
+.proj-block .proj-ex{background:var(--surface);margin-bottom:calc(8px * var(--s,1))}
+.proj-block-label{display:flex;align-items:center;gap:6px;font-size:calc(11px * var(--s,1));font-weight:800;color:var(--mint);text-transform:uppercase;letter-spacing:.07em;margin:calc(2px * var(--s,1)) 4px calc(8px * var(--s,1))}
+
+@media(max-width:860px){
+  .ed-grid{grid-template-columns:1fr}
+  .row2{grid-template-columns:1fr 1fr}
+  .ex-fields{grid-template-columns:1fr 1fr}
+  .ex-header-row{display:none}
+  .tb-nav{display:none}
+  .proj-board{grid-template-columns:1fr !important;overflow-y:auto}
+}
+</style>
+</head>
+<body>
+
+<datalist id="typeList">
+  <option value="Funcional"></option>
+  <option value="HIIT"></option>
+  <option value="Fuerza"></option>
+  <option value="Yoga / Movilidad"></option>
+  <option value="Boxeo"></option>
+  <option value="Spinning"></option>
+</datalist>
+<datalist id="exNameList"></datalist>
+
+<!-- ================= LOGIN ================= -->
+<div id="view-login">
+  <div class="aurora-bg"></div>
+  <div class="login-card">
+    <div class="login-logo"><span class="dot"></span>BAST</div>
+    <div class="login-eyebrow">Portal de profes</div>
+    <h1>Iniciá<br>sesión</h1>
+    <p class="sub">Cargá tus rutinas y proyectalas en la pantalla del gimnasio.</p>
+
+    <div class="err" id="loginErr">Usuario o contraseña incorrectos.</div>
+
+    <div class="field">
+      <label for="loginUser">Usuario o email</label>
+      <input id="loginUser" type="text" placeholder="fede.perez@bast.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="loginPass">Contraseña</label>
+      <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="login-row">
+      <label><input type="checkbox" checked style="accent-color:#7DE9C2"> Recordarme</label>
+      <a href="#">Olvidé mi contraseña</a>
+    </div>
+    <button class="sb fill" style="width:100%" onclick="doLogin()"><span class="inner">Ingresar</span></button>
+    <p class="login-foot">¿Sos alumno? Esta sección es solo para profes de BAST.</p>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="view-app">
+  <div class="topbar">
+    <div class="topbar-in">
+      <div class="tb-logo"><span class="dot"></span>BAST</div>
+      <div class="tb-nav">
+        <button class="active" data-tab="dash" onclick="showTab('dash')">Mis rutinas</button>
+        <button data-tab="editor" onclick="openEditor()">Nueva rutina</button>
+      </div>
+      <div class="tb-user">
+        <div style="text-align:right">
+          <div class="tb-user-name">Fede Pérez</div>
+          <div class="tb-user-role">Profe · Funcional</div>
+        </div>
+        <div class="tb-avatar">FP</div>
+        <button class="logout" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- DASHBOARD ---------- -->
+  <div class="wrap" id="tab-dash">
+    <div class="page-head">
+      <div>
+        <div class="tag">Cronograma</div>
+        <h2>Mis rutinas</h2>
+      </div>
+      <button class="sb fill" onclick="openEditor()"><span class="inner">+ Nueva rutina</span></button>
+    </div>
+    <p class="page-sub">Tildá el check de cada tarjeta para elegir varias rutinas y proyectarlas juntas, en columnas, en la misma pantalla (hasta 4 a la vez).</p>
+
+    <div class="selbar" id="selBar">
+      <span id="selCount">0 rutinas seleccionadas</span>
+      <div class="btns">
+        <button class="ghost-btn" onclick="clearSelection()">Cancelar</button>
+        <button class="sb fill"><span class="inner" onclick="projectSelection()">▶ Proyectar juntas</span></button>
+      </div>
+    </div>
+
+    <div class="rgrid" id="rgrid"></div>
+  </div>
+
+  <!-- ---------- EDITOR ---------- -->
+  <div class="wrap" id="tab-editor" style="display:none">
+    <div class="page-head">
+      <div>
+        <div class="tag">Editor</div>
+        <h2 id="editorTitleHead">Nueva rutina</h2>
+      </div>
+      <button class="mini-btn" style="max-width:140px" onclick="showTab('dash')">← Volver</button>
+    </div>
+
+    <div class="ed-grid">
+      <div class="panel">
+        <div class="row2">
+          <div class="field">
+            <label>Nombre de la clase</label>
+            <input id="fName" type="text" placeholder="Ej: Funcional Intenso">
+          </div>
+          <div class="field">
+            <label>Tipo de clase</label>
+            <input id="fType" type="text" list="typeList" placeholder="Elegí una o escribí la tuya" oninput="updateSummary()">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Día y horario</label>
+            <input id="fDay" type="text" placeholder="Ej: Martes 19:00">
+          </div>
+          <div class="field">
+            <label>Descanso entre ejercicios</label>
+            <input id="fRest" type="text" placeholder="Ej: 30&quot;">
+          </div>
+        </div>
+        <div class="field">
+          <label>Duración estimada</label>
+          <input id="fDuration" type="text" placeholder="Dejalo vacío para calcularla sola, o escribí la tuya (ej: 45 min)" oninput="updateSummary()">
+        </div>
+
+        <label style="margin-top:6px">Ejercicios</label>
+        <p style="color:var(--ink-3);font-size:12.5px;margin:-4px 0 10px">Series, reps y tiempo son opcionales y de referencia — en pantalla se muestran juntos como un tablero, no como cronómetro en vivo. Si dos o más ejercicios van intercalados entre sí (superset), escribíles la misma letra en "Bloque" para que se agrupen. El nombre se autocompleta con ejercicios que ya usaste antes.</p>
+
+        <div class="ex-header-row">
+          <div class="ex-handle-sp"></div>
+          <div class="ex-fields">
+            <span>Ejercicio</span><span>Series</span><span>Reps</span><span>Tiempo por serie</span><span>Bloque</span>
+          </div>
+          <div class="ex-del-sp"></div>
+        </div>
+        <div class="ex-list" id="exList"></div>
+        <button class="add-ex" onclick="addExercise()">+ Agregar ejercicio</button>
+      </div>
+
+      <div class="panel" style="position:sticky;top:90px">
+        <div class="side-title">Resumen</div>
+        <div class="stat-row"><span>Ejercicios</span><b id="sumCount">0</b></div>
+        <div class="stat-row"><span>Duración estimada</span><b id="sumTime">—</b></div>
+        <div class="stat-note" id="sumTimeNote"></div>
+        <div class="stat-row" style="border-bottom:none"><span>Tipo</span><b id="sumType">—</b></div>
+        <div class="ed-actions">
+          <button class="sb fill" style="width:100%" onclick="saveRoutine()"><span class="inner">Guardar rutina</span></button>
+          <button class="ghost-btn" onclick="saveAndProject()">Guardar y proyectar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PROYECCIÓN — tablero estático, sin cronómetro en vivo ================= -->
+<div id="view-proj">
+  <div class="proj-bg"></div>
+  <div class="proj-in">
+    <div class="proj-top">
+      <div class="proj-logo"><span class="dot"></span>BAST</div>
+      <div class="proj-clock disp" id="projClock">00:00:00</div>
+      <button class="proj-exit" onclick="closeProjection()">Salir (Esc)</button>
+    </div>
+    <div class="proj-board" id="projBoard"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ESTADO DE DEMOSTRACIÓN (en memoria — ver explicación aparte
+   sobre cómo pasar esto a una base de datos real)
+   ============================================================ */
+let routines = [
+  {id:1, name:"Funcional Intenso", type:"Funcional", day:"Martes 19:00", rest:"30\"", duration:"",
+   exercises:[
+     {name:"Sentadilla con salto", series:"4", reps:"12", time:"30\"", block:"A"},
+     {name:"Plancha lateral", series:"3", reps:"1", time:"45\"", block:"A"},
+     {name:"Burpees", series:"4", reps:"10", time:"40\"", block:"B"},
+     {name:"Zancadas alternadas", series:"3", reps:"14", time:"35\"", block:"B"},
+   ]},
+  {id:2, name:"HIIT Quema Grasa", type:"HIIT", day:"Jueves 18:30", rest:"20\"", duration:"35 min",
+   exercises:[
+     {name:"Mountain climbers", series:"5", reps:"20", time:"30\"", block:""},
+     {name:"Jumping jacks", series:"5", reps:"25", time:"30\"", block:""},
+     {name:"Sentadilla sumo", series:"4", reps:"15", time:"35\"", block:""},
+   ]},
+  {id:3, name:"Fuerza Tren Superior", type:"Fuerza", day:"Lunes 20:00", rest:"60\"", duration:"",
+   exercises:[
+     {name:"Press militar", series:"4", reps:"10", time:"45\"", block:""},
+     {name:"Remo con mancuerna", series:"4", reps:"12", time:"", block:""},
+   ]},
+];
+let editingId = null;
+let currentExercises = [];
+let selectedIds = new Set();
+let clockInterval = null;
+const MAX_PROJECT = 4;
+
+/* ---------------- LOGIN ---------------- */
+function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+  const err = document.getElementById('loginErr');
+  if(u.length < 3 || p.length < 3){
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  document.getElementById('view-login').style.display = 'none';
+  document.getElementById('view-app').style.display = 'block';
+  renderDashboard();
+}
+function doLogout(){
+  document.getElementById('view-app').style.display = 'none';
+  document.getElementById('view-login').style.display = 'grid';
+  document.getElementById('loginPass').value = '';
+}
+
+/* ---------------- TABS ---------------- */
+function showTab(tab){
+  document.getElementById('tab-dash').style.display = tab === 'dash' ? 'block' : 'none';
+  document.getElementById('tab-editor').style.display = tab === 'editor' ? 'block' : 'none';
+  document.querySelectorAll('.tb-nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tb-nav button[data-tab="'+tab+'"]').classList.add('active');
+  if(tab === 'dash') renderDashboard();
+}
+
+/* ---------------- DURACIÓN (auto o personalizada) ----------------
+   Cálculo automático = para cada ejercicio con tiempo cargado:
+   tiempo por serie × cantidad de series (si no hay series, cuenta 1).
+   Se suman todos los ejercicios. NO se suman descansos.
+------------------------------------------------------------------ */
+function autoEstimateMinutes(exs){
+  const withTime = (exs||[]).filter(e=>e.time);
+  if(!withTime.length) return null;
+  let secs = 0;
+  withTime.forEach(e=>{
+    const t = parseInt(e.time)||0;
+    const s = parseInt(e.series)||1;
+    secs += t*s;
+  });
+  return Math.max(1, Math.round(secs/60));
+}
+function displayDuration(r){
+  if(r.duration) return r.duration;
+  const auto = autoEstimateMinutes(r.exercises);
+  return auto ? auto + ' min aprox.' : 'Duración libre';
+}
+
+/* ---------------- DASHBOARD ---------------- */
+function renderDashboard(){
+  const grid = document.getElementById('rgrid');
+  grid.innerHTML = '';
+  routines.forEach(r=>{
+    const card = document.createElement('div');
+    card.className = 'rcard' + (selectedIds.has(r.id) ? ' selected' : '');
+    card.innerHTML = `
+      <div class="rcard-top">
+        <label class="rcheck">
+          <input type="checkbox" ${selectedIds.has(r.id)?'checked':''} onchange="toggleSelect(${r.id}, this.checked)">
+        </label>
+        <div class="badges">
+          <span class="rcard-badge">${r.type}</span>
+          <span class="rcard-badge gray">${r.exercises.length} ejerc.</span>
+        </div>
+      </div>
+      <h3>${r.name}</h3>
+      <div class="meta">
+        <span>🗓 ${r.day}</span>
+        <span>⏱ ${displayDuration(r)}</span>
+      </div>
+      <div class="rcard-actions">
+        <button class="mini-btn" onclick="openEditor(${r.id})">Editar</button>
+        <button class="mini-btn proj" onclick="startProjection([${r.id}])">▶ Proyectar</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  const newCard = document.createElement('div');
+  newCard.className = 'new-card';
+  newCard.onclick = ()=>openEditor();
+  newCard.innerHTML = `<div class="plus">+</div><div style="font-weight:700">Nueva rutina</div>`;
+  grid.appendChild(newCard);
+  updateSelBar();
+}
+
+/* ---------------- SELECCIÓN MÚLTIPLE ---------------- */
+function toggleSelect(id, checked){
+  if(checked){
+    if(selectedIds.size >= MAX_PROJECT){
+      alert('Podés proyectar hasta ' + MAX_PROJECT + ' rutinas juntas en la misma pantalla.');
+      renderDashboard();
+      return;
+    }
+    selectedIds.add(id);
+  } else {
+    selectedIds.delete(id);
+  }
+  updateSelBar();
+  const cards = document.querySelectorAll('#rgrid .rcard');
+  routines.forEach((r,i)=>{ cards[i]?.classList.toggle('selected', selectedIds.has(r.id)); });
+}
+function updateSelBar(){
+  const bar = document.getElementById('selBar');
+  const count = selectedIds.size;
+  document.getElementById('selCount').textContent = count + (count===1 ? ' rutina seleccionada' : ' rutinas seleccionadas');
+  bar.style.display = count > 0 ? 'flex' : 'none';
+}
+function clearSelection(){
+  selectedIds.clear();
+  renderDashboard();
+}
+function projectSelection(){
+  if(!selectedIds.size) return;
+  startProjection([...selectedIds]);
+}
+
+/* ---------------- EDITOR ---------------- */
+function openEditor(id){
+  editingId = id || null;
+  const r = routines.find(x=>x.id===id);
+  document.getElementById('editorTitleHead').textContent = r ? 'Editar rutina' : 'Nueva rutina';
+  document.getElementById('fName').value = r ? r.name : '';
+  document.getElementById('fType').value = r ? r.type : '';
+  document.getElementById('fDay').value = r ? r.day : '';
+  document.getElementById('fRest').value = r ? r.rest : '30"';
+  document.getElementById('fDuration').value = r ? (r.duration||'') : '';
+  currentExercises = r ? JSON.parse(JSON.stringify(r.exercises)) : [
+    {name:'', series:'', reps:'', time:'', block:''}
+  ];
+  renderExercises();
+  showTab('editor');
+}
+function refreshExerciseNameList(){
+  const dl = document.getElementById('exNameList');
+  const names = new Set();
+  routines.forEach(r=> r.exercises.forEach(e=>{ if(e.name) names.add(e.name); }));
+  currentExercises.forEach(e=>{ if(e.name) names.add(e.name); });
+  dl.innerHTML = [...names].sort((a,b)=>a.localeCompare(b,'es')).map(n=>`<option value="${n}"></option>`).join('');
+}
+function renderExercises(){
+  refreshExerciseNameList();
+  const list = document.getElementById('exList');
+  list.innerHTML = '';
+  currentExercises.forEach((ex,i)=>{
+    const row = document.createElement('div');
+    row.className = 'ex-item';
+    row.innerHTML = `
+      <div class="ex-handle">${i+1}</div>
+      <div class="ex-fields">
+        <input placeholder="Nombre del ejercicio" list="exNameList" value="${ex.name||''}" oninput="updateEx(${i},'name',this.value)">
+        <input placeholder="Series" value="${ex.series||''}" oninput="updateEx(${i},'series',this.value)">
+        <input placeholder="Reps" value="${ex.reps||''}" oninput="updateEx(${i},'reps',this.value)">
+        <input placeholder="Tiempo (ej 30&quot;)" value="${ex.time||''}" oninput="updateEx(${i},'time',this.value)">
+        <input class="block-input" placeholder="Bloque" title="Ejercicios con la misma letra de bloque (ej: A) se agrupan y se alternan entre sí en pantalla" value="${ex.block||''}" oninput="updateEx(${i},'block',this.value)">
+      </div>
+      <button class="ex-del" onclick="delExercise(${i})">✕</button>`;
+    list.appendChild(row);
+  });
+  updateSummary();
+}
+function updateEx(i, field, val){
+  currentExercises[i][field] = val;
+  if(field === 'name') refreshExerciseNameList();
+  updateSummary();
+}
+function addExercise(){ currentExercises.push({name:'',series:'',reps:'',time:'',block:''}); renderExercises(); }
+function delExercise(i){ currentExercises.splice(i,1); renderExercises(); }
+function updateSummary(){
+  document.getElementById('sumCount').textContent = currentExercises.filter(e=>e.name).length;
+  document.getElementById('sumType').textContent = document.getElementById('fType').value || '—';
+
+  const customDur = document.getElementById('fDuration').value.trim();
+  const sumTime = document.getElementById('sumTime');
+  const sumNote = document.getElementById('sumTimeNote');
+  if(customDur){
+    sumTime.textContent = customDur;
+    sumNote.textContent = 'Personalizada';
+  } else {
+    const auto = autoEstimateMinutes(currentExercises);
+    sumTime.textContent = auto ? auto + ' min' : '—';
+    sumNote.textContent = auto ? 'Auto: tiempo × series, sin descansos' : 'Cargá tiempos o escribí una duración';
+  }
+}
+
+function buildRoutineFromForm(){
+  return {
+    id: editingId || Date.now(),
+    name: document.getElementById('fName').value || 'Rutina sin nombre',
+    type: document.getElementById('fType').value || 'Sin tipo',
+    day: document.getElementById('fDay').value || 'Sin asignar',
+    rest: document.getElementById('fRest').value || '30"',
+    duration: document.getElementById('fDuration').value.trim(),
+    exercises: currentExercises.filter(e=>e.name).map(e=>({
+      name:e.name, series:e.series||'', reps:e.reps||'', time:e.time||'', block:(e.block||'').trim()
+    }))
+  };
+}
+function saveRoutine(){
+  const r = buildRoutineFromForm();
+  const idx = routines.findIndex(x=>x.id===r.id);
+  if(idx>-1) routines[idx] = r; else routines.push(r);
+  showTab('dash');
+}
+function saveAndProject(){
+  const r = buildRoutineFromForm();
+  const idx = routines.findIndex(x=>x.id===r.id);
+  if(idx>-1) routines[idx] = r; else routines.push(r);
+  startProjection([r.id]);
+}
+
+/* ---------------- PROYECCIÓN (tablero estático) ----------------
+   No hay cronómetro en vivo: se listan todos los ejercicios de
+   cada rutina con sus series/reps/tiempo de referencia, para que
+   cualquiera que llegue tarde o se atrase vea de una todo lo que
+   tiene que hacer en la clase. El reloj de arriba es la hora real,
+   no una cuenta regresiva. Los ejercicios con la misma letra de
+   bloque se agrupan para mostrarse como superset (intercalados).
+------------------------------------------------------------------ */
+function groupExercises(exs){
+  const groups = [];
+  let i = 0;
+  while(i < exs.length){
+    const ex = exs[i];
+    if(ex.block){
+      const items = [ex];
+      let j = i+1;
+      while(j < exs.length && exs[j].block === ex.block){ items.push(exs[j]); j++; }
+      groups.push({block: ex.block, items, startIndex: i});
+      i = j;
+    } else {
+      groups.push({block: null, items: [ex], startIndex: i});
+      i++;
+    }
+  }
+  return groups;
+}
+function projExRow(ex, num){
+  const chips = [];
+  if(ex.series && ex.reps) chips.push(`<span class="proj-chip">${ex.series}×${ex.reps}</span>`);
+  else if(ex.series) chips.push(`<span class="proj-chip">${ex.series} series</span>`);
+  else if(ex.reps) chips.push(`<span class="proj-chip">${ex.reps} reps</span>`);
+  if(ex.time) chips.push(`<span class="proj-chip time">${ex.time}</span>`);
+  return `<div class="proj-ex">
+    <div class="proj-ex-num">${num}</div>
+    <div class="proj-ex-name">${ex.name}</div>
+    <div class="proj-ex-meta">${chips.join('')}</div>
+  </div>`;
+}
+function renderProjExercises(exs){
+  return groupExercises(exs).map(g=>{
+    if(g.block){
+      return `<div class="proj-block">
+        <div class="proj-block-label">⇄ Bloque ${g.block} · alternar</div>
+        ${g.items.map((ex,k)=>projExRow(ex, g.startIndex+k+1)).join('')}
+      </div>`;
+    }
+    return projExRow(g.items[0], g.startIndex+1);
+  }).join('');
+}
+function startProjection(ids){
+  const rs = ids.map(id=>routines.find(x=>x.id===id)).filter(Boolean);
+  if(!rs.length) return;
+  renderProjBoard(rs);
+  document.getElementById('view-proj').style.display = 'block';
+  updateClock();
+  clearInterval(clockInterval);
+  clockInterval = setInterval(updateClock, 1000);
+  requestAnimationFrame(()=>requestAnimationFrame(fitProjColumns));
+}
+/* ---------------- AJUSTE AUTOMÁTICO DE COLUMNAS ----------------
+   En vez de scroll, si los ejercicios de una rutina no entran
+   parados en una sola columna, se reparten solos en 2, 3 o hasta
+   4 columnas dentro del mismo bloque de esa rutina. Si aun así no
+   entrarían, se compactan un poco (letra y espaciado más chicos)
+   antes de recurrir a recortar — nunca aparece una barra de scroll.
+------------------------------------------------------------------ */
+function fitProjColumns(){
+  const MAX_COLS = 5;
+  const MIN_SCALE = 0.55;
+  const SOFT_MIN_SCALE = 0.85; // por cada cantidad de columnas, no se achica más que esto antes de sumar otra columna
+  document.querySelectorAll('#projBoard .proj-ex-list').forEach(list=>{
+    list.classList.remove('multicol');
+    list.style.columnCount = '';
+    list.style.setProperty('--s', 1);
+
+    /* Con 1 columna (flex normal) el contenido que no entra desborda
+       hacia ABAJO (scrollHeight). Con 2+ columnas (CSS columns) puede
+       desbordar para abajo (se recorta con overflow:hidden y esos
+       ejercicios quedan invisibles) o el navegador puede agregar
+       columnas extra hacia el COSTADO (scrollWidth) — según el motor,
+       pasa cualquiera de las dos. Por eso se chequean SIEMPRE los dos
+       ejes: si desborda en cualquiera de los dos, no entra. */
+    const fits = ()=> list.scrollHeight <= list.clientHeight + 2 && list.scrollWidth <= list.clientWidth + 2;
+
+    if(fits()) return;
+
+    /* Prioridad: sumar columnas ANTES de achicar mucho la letra — leer
+       en 2-3 columnas casi a tamaño normal es más cómodo que 1 columna
+       con letra diminuta. Por cada cantidad de columnas se prueba desde
+       escala 1 hasta un piso "blando"; solo en la última columna
+       disponible se permite bajar hasta el piso mínimo real. */
+    let solved = false;
+    for(let cols=1; cols<=MAX_COLS && !solved; cols++){
+      if(cols>1){ list.classList.add('multicol'); list.style.columnCount = cols; }
+      const floor = cols<MAX_COLS ? SOFT_MIN_SCALE : MIN_SCALE;
+      for(let s=1; s>=floor-0.001; s-=0.05){
+        list.style.setProperty('--s', s);
+        if(fits()){ solved = true; break; }
+      }
+    }
+    if(!solved){
+      /* último recurso: máximo de columnas y letra más chica permitida,
+         para que todos los ejercicios sigan siendo visibles */
+      list.classList.add('multicol');
+      list.style.columnCount = MAX_COLS;
+      list.style.setProperty('--s', MIN_SCALE);
+    }
+  });
+}
+let resizeT = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeT);
+  resizeT = setTimeout(()=>{
+    if(document.getElementById('view-proj').style.display === 'block') fitProjColumns();
+  }, 120);
+});
+function renderProjBoard(rs){
+  const board = document.getElementById('projBoard');
+  board.style.gridTemplateColumns = `repeat(${rs.length}, 1fr)`;
+  board.innerHTML = rs.map(r=>`
+    <div class="proj-col">
+      <div class="proj-col-head">
+        <div class="proj-col-head-top">
+          <span class="rcard-badge">${r.type}</span>
+          <h3 class="disp">${r.name}</h3>
+        </div>
+        <div class="day">🗓 ${r.day} · Descanso ${r.rest}</div>
+      </div>
+      <div class="proj-ex-list">
+        ${r.exercises.length ? renderProjExercises(r.exercises) : `<div class="proj-empty">Esta rutina todavía no tiene ejercicios cargados.</div>`}
+      </div>
+    </div>`).join('');
+}
+function updateClock(){
+  const now = new Date();
+  document.getElementById('projClock').textContent = now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+function closeProjection(){
+  clearInterval(clockInterval);
+  document.getElementById('view-proj').style.display = 'none';
+}
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeProjection(); });
+</script>
+</body>
+</html>
