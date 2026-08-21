@@ -207,19 +207,24 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-tra
 .live-bg.rest{background:radial-gradient(120% 90% at 50% -10%,rgba(233,115,125,.16) 0%,var(--bg) 55%)}
 .live-bg.neutral,.live-bg.done{background:radial-gradient(120% 90% at 50% -10%,var(--mint-soft) 0%,var(--bg) 55%)}
 .live-in{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;padding:3.5vh 4.5vw}
-.live-top{display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.live-exit{color:var(--ink-3);font-size:12.5px;font-weight:700;border:1px solid var(--line);padding:9px 16px;border-radius:9px;background:rgba(17,22,20,.7)}
+.live-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-shrink:0}
+.live-top-left{display:flex;align-items:center;gap:14px}
+.live-type-badge{font-family:var(--disp);font-weight:900;font-size:13px;letter-spacing:.1em;color:var(--mint);background:var(--mint-soft);border:1px solid var(--mint-deep);padding:7px 14px;border-radius:20px}
+.live-exit{color:var(--ink-3);font-size:12.5px;font-weight:700;border:1px solid var(--line);padding:9px 16px;border-radius:9px;background:rgba(17,22,20,.7);flex-shrink:0}
 .live-exit:hover{color:var(--ink)}
-.live-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0}
+.live-mid{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:0;width:100%}
+.live-mid.centered{justify-content:center}
+.live-top-block{flex-shrink:0;display:flex;flex-direction:column;align-items:center;width:100%}
 .live-status{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:900;font-size:clamp(16px,2.2vw,26px);letter-spacing:.1em;padding:10px 26px;border-radius:50px;margin-bottom:2.5vh;border:2px solid transparent;transition:.2s}
 .live-status.work{background:rgba(125,233,194,.14);color:var(--mint);border-color:var(--mint)}
 .live-status.rest{background:rgba(233,115,125,.14);color:var(--red);border-color:var(--red)}
 .live-status.neutral,.live-status.done{background:var(--mint-soft);color:var(--mint);border-color:var(--mint-deep)}
-.live-clock{font-family:var(--disp);font-weight:900;font-size:clamp(72px,16vw,220px);line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.live-clock{font-family:var(--disp);font-weight:900;font-size:clamp(72px,16vw,220px);line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums;transition:font-size .2s}
+.live-clock.compact{font-size:clamp(42px,7.5vw,100px)}
 .live-round{color:var(--ink-2);font-size:clamp(13px,1.4vw,17px);font-weight:700;margin-top:1.5vh;letter-spacing:.05em;text-transform:uppercase}
 .live-exname{font-family:var(--disp);font-weight:900;font-size:clamp(26px,4.2vw,58px);text-transform:uppercase;margin-top:2.5vh;line-height:1.15;max-width:90%}
-.live-list{width:100%;max-width:760px;margin-top:3.5vh;display:flex;flex-direction:column;gap:10px;max-height:38vh;overflow-y:auto}
-.live-controls{display:flex;justify-content:center;gap:14px;flex-shrink:0;padding-top:2.5vh;flex-wrap:wrap}
+.live-list{width:100%;max-width:920px;margin-top:2vh;flex:1;min-height:0}
+.live-controls{display:flex;justify-content:center;gap:14px;flex-shrink:0;padding-top:2vh;flex-wrap:wrap}
 .live-controls button{font-family:var(--body);font-weight:800;font-size:13.5px;padding:14px 26px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);transition:.15s}
 .live-controls button:hover{border-color:var(--mint-deep)}
 .live-controls button.primary{background:var(--mint);border-color:var(--mint);color:#04140F}
@@ -420,15 +425,20 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-tra
   <div class="live-bg neutral" id="liveBg"></div>
   <div class="live-in">
     <div class="live-top">
-      <div class="proj-logo"><span class="dot"></span>BAST</div>
+      <div class="live-top-left">
+        <div class="proj-logo"><span class="dot"></span>BAST</div>
+        <div class="live-type-badge" id="liveTypeBadge"></div>
+      </div>
       <button class="live-exit" onclick="closeLiveClass()">Salir (Esc)</button>
     </div>
-    <div class="live-mid">
-      <div class="live-status neutral" id="liveStatus">CLASE</div>
-      <div class="live-clock disp" id="liveClock">00:00</div>
-      <div class="live-round" id="liveRound"></div>
-      <div class="live-exname disp" id="liveExName"></div>
-      <div class="live-list" id="liveList"></div>
+    <div class="live-mid centered" id="liveMid">
+      <div class="live-top-block">
+        <div class="live-status neutral" id="liveStatus">CLASE</div>
+        <div class="live-clock disp" id="liveClock">00:00</div>
+        <div class="live-round" id="liveRound"></div>
+        <div class="live-exname disp" id="liveExName"></div>
+      </div>
+      <div class="live-list proj-ex-list" id="liveList"></div>
     </div>
     <div class="live-controls" id="liveControls">
       <button class="primary" id="livePlayBtn" onclick="toggleLivePause()">⏸ Pausar</button>
@@ -748,54 +758,60 @@ function startProjection(ids){
    entrarían, se compactan un poco (letra y espaciado más chicos)
    antes de recurrir a recortar — nunca aparece una barra de scroll.
 ------------------------------------------------------------------ */
-function fitProjColumns(){
+function fitExList(list){
   const MAX_COLS = 5;
   const MIN_SCALE = 0.55;
   const SOFT_MIN_SCALE = 0.85; // por cada cantidad de columnas, no se achica más que esto antes de sumar otra columna
-  document.querySelectorAll('#projBoard .proj-ex-list').forEach(list=>{
-    list.classList.remove('multicol');
-    list.style.columnCount = '';
-    list.style.setProperty('--s', 1);
+  list.classList.remove('multicol');
+  list.style.columnCount = '';
+  list.style.setProperty('--s', 1);
 
-    /* Con 1 columna (flex normal) el contenido que no entra desborda
-       hacia ABAJO (scrollHeight). Con 2+ columnas (CSS columns) puede
-       desbordar para abajo (se recorta con overflow:hidden y esos
-       ejercicios quedan invisibles) o el navegador puede agregar
-       columnas extra hacia el COSTADO (scrollWidth) — según el motor,
-       pasa cualquiera de las dos. Por eso se chequean SIEMPRE los dos
-       ejes: si desborda en cualquiera de los dos, no entra. */
-    const fits = ()=> list.scrollHeight <= list.clientHeight + 2 && list.scrollWidth <= list.clientWidth + 2;
+  /* Con 1 columna (flex normal) el contenido que no entra desborda
+     hacia ABAJO (scrollHeight). Con 2+ columnas (CSS columns) puede
+     desbordar para abajo (se recorta con overflow:hidden y esos
+     ejercicios quedan invisibles) o el navegador puede agregar
+     columnas extra hacia el COSTADO (scrollWidth) — según el motor,
+     pasa cualquiera de las dos. Por eso se chequean SIEMPRE los dos
+     ejes: si desborda en cualquiera de los dos, no entra. */
+  const fits = ()=> list.scrollHeight <= list.clientHeight + 2 && list.scrollWidth <= list.clientWidth + 2;
 
-    if(fits()) return;
+  if(fits()) return;
 
-    /* Prioridad: sumar columnas ANTES de achicar mucho la letra — leer
-       en 2-3 columnas casi a tamaño normal es más cómodo que 1 columna
-       con letra diminuta. Por cada cantidad de columnas se prueba desde
-       escala 1 hasta un piso "blando"; solo en la última columna
-       disponible se permite bajar hasta el piso mínimo real. */
-    let solved = false;
-    for(let cols=1; cols<=MAX_COLS && !solved; cols++){
-      if(cols>1){ list.classList.add('multicol'); list.style.columnCount = cols; }
-      const floor = cols<MAX_COLS ? SOFT_MIN_SCALE : MIN_SCALE;
-      for(let s=1; s>=floor-0.001; s-=0.05){
-        list.style.setProperty('--s', s);
-        if(fits()){ solved = true; break; }
-      }
+  /* Prioridad: sumar columnas ANTES de achicar mucho la letra — leer
+     en 2-3 columnas casi a tamaño normal es más cómodo que 1 columna
+     con letra diminuta. Por cada cantidad de columnas se prueba desde
+     escala 1 hasta un piso "blando"; solo en la última columna
+     disponible se permite bajar hasta el piso mínimo real. */
+  let solved = false;
+  for(let cols=1; cols<=MAX_COLS && !solved; cols++){
+    if(cols>1){ list.classList.add('multicol'); list.style.columnCount = cols; }
+    const floor = cols<MAX_COLS ? SOFT_MIN_SCALE : MIN_SCALE;
+    for(let s=1; s>=floor-0.001; s-=0.05){
+      list.style.setProperty('--s', s);
+      if(fits()){ solved = true; break; }
     }
-    if(!solved){
-      /* último recurso: máximo de columnas y letra más chica permitida,
-         para que todos los ejercicios sigan siendo visibles */
-      list.classList.add('multicol');
-      list.style.columnCount = MAX_COLS;
-      list.style.setProperty('--s', MIN_SCALE);
-    }
-  });
+  }
+  if(!solved){
+    /* último recurso: máximo de columnas y letra más chica permitida,
+       para que todos los ejercicios sigan siendo visibles */
+    list.classList.add('multicol');
+    list.style.columnCount = MAX_COLS;
+    list.style.setProperty('--s', MIN_SCALE);
+  }
+}
+function fitProjColumns(){
+  document.querySelectorAll('#projBoard .proj-ex-list').forEach(fitExList);
+}
+function fitLiveList(){
+  const list = document.getElementById('liveList');
+  if(list.style.display !== 'none') fitExList(list);
 }
 let resizeT = null;
 window.addEventListener('resize', ()=>{
   clearTimeout(resizeT);
   resizeT = setTimeout(()=>{
     if(document.getElementById('view-proj').style.display === 'block') fitProjColumns();
+    if(document.getElementById('view-live').style.display === 'block') fitLiveList();
   }, 120);
 });
 function renderProjBoard(rs){
@@ -908,6 +924,7 @@ function startLiveClass(){
     if(workSec<=0 || rounds<=0) return alert('Completá trabajo, descanso y cantidad de rondas.');
     LC = {type:'TABATA', workSec, restSec, totalRounds:rounds, round:1, phase:'work', remaining:workSec, running:false};
   }
+  document.getElementById('liveTypeBadge').textContent = liveType==='FORTIME' ? 'FOR TIME' : liveType;
   closeLiveSetup();
   document.getElementById('view-live').style.display = 'block';
   const list = document.getElementById('liveList');
@@ -946,6 +963,8 @@ function runLivePrep(){
   document.getElementById('livePlayBtn').style.display = 'none';
   document.getElementById('liveFinishBtn').style.display = 'none';
   round.textContent = ''; exname.style.display = 'none'; list.style.display = 'none';
+  document.getElementById('liveMid').classList.add('centered');
+  clock.classList.remove('compact');
   bg.className = 'live-bg neutral';
   status.className = 'live-status neutral';
   status.textContent = 'PREPARATE';
@@ -983,7 +1002,12 @@ function setLivePhaseUI(){
   } else {
     exname.style.display = 'none';
   }
+  const liveMid = document.getElementById('liveMid');
+  liveMid.classList.toggle('centered', isInterval);
+  clock.classList.toggle('compact', !isInterval && liveRoutine.exercises.length > 4);
+  const wasHidden = list.style.display === 'none';
   list.style.display = isInterval ? 'none' : 'flex';
+  if(!isInterval && wasHidden) requestAnimationFrame(()=>requestAnimationFrame(fitLiveList));
   playBtn.style.display = LC.phase==='done' ? 'none' : 'inline-block';
   playBtn.textContent = LC.running ? '⏸ Pausar' : '▶ Continuar';
   finishBtn.style.display = (LC.type==='FORTIME' && LC.phase!=='done') ? 'inline-block' : 'none';
