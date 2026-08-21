@@ -180,6 +180,51 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-tra
 .proj-block .proj-ex{background:var(--surface);margin-bottom:calc(8px * var(--s,1))}
 .proj-block-label{display:flex;align-items:center;gap:6px;font-size:calc(11px * var(--s,1));font-weight:800;color:var(--mint);text-transform:uppercase;letter-spacing:.07em;margin:calc(2px * var(--s,1)) 4px calc(8px * var(--s,1))}
 
+.mini-btn.live{color:var(--mint);border-color:var(--mint-deep)}
+.mini-btn.live:hover{background:var(--mint-soft)}
+
+/* ================= MODAL: configurar clase en vivo ================= */
+.modal-back{position:fixed;inset:0;background:rgba(3,5,4,.72);backdrop-filter:blur(3px);z-index:110;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-card h3{font-family:var(--disp);font-weight:900;font-size:22px;margin:0 0 4px;text-transform:uppercase}
+.modal-card .sub{color:var(--ink-3);font-size:13px;margin:0 0 20px}
+.live-type-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.live-type-tabs button{flex:1;min-width:100px;padding:12px 10px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font-weight:800;font-size:12.5px;letter-spacing:.03em;text-transform:uppercase;transition:.15s}
+.live-type-tabs button.active{background:var(--mint);border-color:var(--mint);color:#04140F}
+.dur-row{display:flex;align-items:center;gap:8px}
+.dur-row input{width:64px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px;font-family:var(--body);font-size:15px;text-align:center}
+.dur-row span{color:var(--ink-3);font-size:12.5px;font-weight:700}
+#liveFields .field{margin-bottom:14px}
+#liveFields input[type=number]:not(.dur-row input){width:100%;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 11px;font-family:var(--body);font-size:15px}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.modal-actions .ghost-btn{flex:1;width:auto}
+.modal-actions .sb{flex:1.4}
+
+/* ================= CLASE EN VIVO (cronómetro) ================= */
+#view-live{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;color:var(--ink)}
+.live-bg{position:absolute;inset:0;z-index:0;transition:background 1s ease}
+.live-bg.work{background:radial-gradient(120% 90% at 50% -10%,rgba(125,233,194,.18) 0%,var(--bg) 55%)}
+.live-bg.rest{background:radial-gradient(120% 90% at 50% -10%,rgba(233,115,125,.16) 0%,var(--bg) 55%)}
+.live-bg.neutral,.live-bg.done{background:radial-gradient(120% 90% at 50% -10%,var(--mint-soft) 0%,var(--bg) 55%)}
+.live-in{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;padding:3.5vh 4.5vw}
+.live-top{display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.live-exit{color:var(--ink-3);font-size:12.5px;font-weight:700;border:1px solid var(--line);padding:9px 16px;border-radius:9px;background:rgba(17,22,20,.7)}
+.live-exit:hover{color:var(--ink)}
+.live-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0}
+.live-status{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:900;font-size:clamp(16px,2.2vw,26px);letter-spacing:.1em;padding:10px 26px;border-radius:50px;margin-bottom:2.5vh;border:2px solid transparent;transition:.2s}
+.live-status.work{background:rgba(125,233,194,.14);color:var(--mint);border-color:var(--mint)}
+.live-status.rest{background:rgba(233,115,125,.14);color:var(--red);border-color:var(--red)}
+.live-status.neutral,.live-status.done{background:var(--mint-soft);color:var(--mint);border-color:var(--mint-deep)}
+.live-clock{font-family:var(--disp);font-weight:900;font-size:clamp(72px,16vw,220px);line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.live-round{color:var(--ink-2);font-size:clamp(13px,1.4vw,17px);font-weight:700;margin-top:1.5vh;letter-spacing:.05em;text-transform:uppercase}
+.live-exname{font-family:var(--disp);font-weight:900;font-size:clamp(26px,4.2vw,58px);text-transform:uppercase;margin-top:2.5vh;line-height:1.15;max-width:90%}
+.live-list{width:100%;max-width:760px;margin-top:3.5vh;display:flex;flex-direction:column;gap:10px;max-height:38vh;overflow-y:auto}
+.live-controls{display:flex;justify-content:center;gap:14px;flex-shrink:0;padding-top:2.5vh;flex-wrap:wrap}
+.live-controls button{font-family:var(--body);font-weight:800;font-size:13.5px;padding:14px 26px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);transition:.15s}
+.live-controls button:hover{border-color:var(--mint-deep)}
+.live-controls button.primary{background:var(--mint);border-color:var(--mint);color:#04140F}
+.live-controls button.primary:hover{background:#fff}
+
 @media(max-width:860px){
   .ed-grid{grid-template-columns:1fr}
   .row2{grid-template-columns:1fr 1fr}
@@ -351,6 +396,48 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-tra
   </div>
 </div>
 
+<!-- ================= MODAL: configurar clase en vivo ================= -->
+<div class="modal-back" id="liveSetupBack" style="display:none" onclick="if(event.target===this) closeLiveSetup()">
+  <div class="modal-card">
+    <h3>⏱ Clase en vivo</h3>
+    <div class="sub" id="liveSetupName"></div>
+    <div class="live-type-tabs">
+      <button data-t="AMRAP" class="active" onclick="selectLiveType('AMRAP')">AMRAP</button>
+      <button data-t="FORTIME" onclick="selectLiveType('FORTIME')">For Time</button>
+      <button data-t="EMOM" onclick="selectLiveType('EMOM')">EMOM</button>
+      <button data-t="TABATA" onclick="selectLiveType('TABATA')">Tabata</button>
+    </div>
+    <div id="liveFields"></div>
+    <div class="modal-actions">
+      <button class="ghost-btn" onclick="closeLiveSetup()">Cancelar</button>
+      <button class="sb fill"><span class="inner" onclick="startLiveClass()">▶ Comenzar clase</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= CLASE EN VIVO — cronómetro proyectable ================= -->
+<div id="view-live">
+  <div class="live-bg neutral" id="liveBg"></div>
+  <div class="live-in">
+    <div class="live-top">
+      <div class="proj-logo"><span class="dot"></span>BAST</div>
+      <button class="live-exit" onclick="closeLiveClass()">Salir (Esc)</button>
+    </div>
+    <div class="live-mid">
+      <div class="live-status neutral" id="liveStatus">CLASE</div>
+      <div class="live-clock disp" id="liveClock">00:00</div>
+      <div class="live-round" id="liveRound"></div>
+      <div class="live-exname disp" id="liveExName"></div>
+      <div class="live-list" id="liveList"></div>
+    </div>
+    <div class="live-controls" id="liveControls">
+      <button class="primary" id="livePlayBtn" onclick="toggleLivePause()">⏸ Pausar</button>
+      <button id="liveFinishBtn" onclick="finishLiveClass()">✓ Terminado</button>
+      <button onclick="resetLiveClass()">↺ Reiniciar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    ESTADO DE DEMOSTRACIÓN (en memoria — ver explicación aparte
@@ -458,7 +545,8 @@ function renderDashboard(){
       <div class="rcard-actions">
         <button class="mini-btn" onclick="openEditor(${r.id})">Editar</button>
         <button class="mini-btn proj" onclick="startProjection([${r.id}])">▶ Proyectar</button>
-      </div>`;
+      </div>
+      <button class="mini-btn live" style="width:100%;margin-top:8px" onclick="openLiveSetup(${r.id})">⏱ Clase en vivo</button>`;
     grid.appendChild(card);
   });
   const newCard = document.createElement('div');
@@ -735,7 +823,244 @@ function closeProjection(){
   clearInterval(clockInterval);
   document.getElementById('view-proj').style.display = 'none';
 }
-document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeProjection(); });
+
+/* ================= CLASE EN VIVO (cronómetro) ----------------
+   Modo aparte de la proyección estática de arriba (que no se toca).
+   AMRAP y For Time: un solo reloj corriendo + la lista completa de
+   ejercicios de referencia, sin ciclar solos (el grupo se maneja
+   a su ritmo). EMOM y Tabata: ciclan automáticamente un ejercicio
+   por ronda (si hay más rondas que ejercicios, repite la lista desde
+   el principio), con cartel de estado verde "trabajo" / rojo
+   "descanso" y beeps de aviso.
+------------------------------------------------------------------ */
+let liveRoutine = null;
+let liveType = 'AMRAP';
+let LC = null;
+let liveInterval = null;
+let liveAudioCtx = null;
+
+function openLiveSetup(id){
+  liveRoutine = routines.find(x=>x.id===id);
+  if(!liveRoutine) return;
+  if(!liveRoutine.exercises.length){
+    alert('Esta rutina todavía no tiene ejercicios cargados. Agregá al menos uno antes de iniciar la clase.');
+    return;
+  }
+  liveType = 'AMRAP';
+  document.querySelectorAll('.live-type-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.t==='AMRAP'));
+  document.getElementById('liveSetupName').textContent = liveRoutine.name + ' · ' + liveRoutine.exercises.length + ' ejerc.';
+  renderLiveFields();
+  document.getElementById('liveSetupBack').style.display = 'flex';
+}
+function closeLiveSetup(){
+  document.getElementById('liveSetupBack').style.display = 'none';
+}
+function selectLiveType(t){
+  liveType = t;
+  document.querySelectorAll('.live-type-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.t===t));
+  renderLiveFields();
+}
+function durInputs(prefix, defMin, defSec){
+  return `<div class="dur-row">
+    <input id="${prefix}Min" type="number" min="0" max="99" value="${defMin}"><span>min</span>
+    <input id="${prefix}Sec" type="number" min="0" max="59" value="${defSec}"><span>seg</span>
+  </div>`;
+}
+function renderLiveFields(){
+  const box = document.getElementById('liveFields');
+  const n = liveRoutine.exercises.length;
+  if(liveType==='AMRAP'){
+    box.innerHTML = `<div class="field"><label>Duración total</label>${durInputs('lfTotal',12,0)}</div>`;
+  } else if(liveType==='FORTIME'){
+    box.innerHTML = `<div class="field"><label>Tope de tiempo</label>${durInputs('lfTotal',20,0)}</div>`;
+  } else if(liveType==='EMOM'){
+    box.innerHTML = `<div class="field"><label>Duración de cada ronda</label>${durInputs('lfRound',1,0)}</div>
+      <div class="field"><label>Cantidad de rondas</label><input id="lfRounds" type="number" min="1" max="99" value="${n}"></div>`;
+  } else if(liveType==='TABATA'){
+    box.innerHTML = `<div class="field"><label>Trabajo</label>${durInputs('lfWork',0,30)}</div>
+      <div class="field"><label>Descanso</label>${durInputs('lfRest',1,0)}</div>
+      <div class="field"><label>Cantidad de rondas</label><input id="lfRounds" type="number" min="1" max="99" value="${n}"></div>`;
+  }
+}
+function readDur(prefix){
+  const m = parseInt(document.getElementById(prefix+'Min').value)||0;
+  const s = parseInt(document.getElementById(prefix+'Sec').value)||0;
+  return m*60+s;
+}
+function startLiveClass(){
+  if(liveType==='AMRAP'){
+    const total = readDur('lfTotal');
+    if(total<=0) return alert('Poné una duración válida.');
+    LC = {type:'AMRAP', totalSec:total, remaining:total, phase:'neutral', running:false, round:null, totalRounds:null};
+  } else if(liveType==='FORTIME'){
+    const total = readDur('lfTotal');
+    if(total<=0) return alert('Poné un tope de tiempo válido.');
+    LC = {type:'FORTIME', totalSec:total, remaining:total, phase:'neutral', running:false, round:null, totalRounds:null};
+  } else if(liveType==='EMOM'){
+    const roundSec = readDur('lfRound');
+    const rounds = parseInt(document.getElementById('lfRounds').value)||0;
+    if(roundSec<=0 || rounds<=0) return alert('Completá la duración de ronda y la cantidad de rondas.');
+    LC = {type:'EMOM', roundSec, totalRounds:rounds, round:1, phase:'work', remaining:roundSec, running:false};
+  } else if(liveType==='TABATA'){
+    const workSec = readDur('lfWork');
+    const restSec = readDur('lfRest');
+    const rounds = parseInt(document.getElementById('lfRounds').value)||0;
+    if(workSec<=0 || rounds<=0) return alert('Completá trabajo, descanso y cantidad de rondas.');
+    LC = {type:'TABATA', workSec, restSec, totalRounds:rounds, round:1, phase:'work', remaining:workSec, running:false};
+  }
+  closeLiveSetup();
+  document.getElementById('view-live').style.display = 'block';
+  const list = document.getElementById('liveList');
+  list.innerHTML = renderProjExercises(liveRoutine.exercises);
+  runLivePrep();
+}
+function currentLiveExercise(){
+  if(LC.round==null) return null;
+  const exs = liveRoutine.exercises;
+  return exs[(LC.round-1) % exs.length];
+}
+function fmtClock(sec){
+  sec = Math.max(0, sec);
+  const m = Math.floor(sec/60), s = sec%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function liveBeep(freq, dur){
+  try{
+    if(!liveAudioCtx) liveAudioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const ctx = liveAudioCtx;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = 'sine'; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime+dur+0.02);
+  }catch(e){}
+}
+function runLivePrep(){
+  clearInterval(liveInterval);
+  const status=document.getElementById('liveStatus'), clock=document.getElementById('liveClock'),
+        round=document.getElementById('liveRound'), exname=document.getElementById('liveExName'),
+        list=document.getElementById('liveList'), bg=document.getElementById('liveBg');
+  document.getElementById('livePlayBtn').style.display = 'none';
+  document.getElementById('liveFinishBtn').style.display = 'none';
+  round.textContent = ''; exname.style.display = 'none'; list.style.display = 'none';
+  bg.className = 'live-bg neutral';
+  status.className = 'live-status neutral';
+  status.textContent = 'PREPARATE';
+  let n = 5;
+  clock.textContent = n;
+  liveBeep(880,0.1);
+  liveInterval = setInterval(()=>{
+    n--;
+    if(n<=0){
+      clearInterval(liveInterval);
+      liveBeep(1318,0.25);
+      startLiveTick();
+      return;
+    }
+    clock.textContent = n;
+    liveBeep(880,0.1);
+  },1000);
+}
+function setLivePhaseUI(){
+  const bg=document.getElementById('liveBg'), status=document.getElementById('liveStatus'),
+        round=document.getElementById('liveRound'), exname=document.getElementById('liveExName'),
+        list=document.getElementById('liveList'), clock=document.getElementById('liveClock'),
+        playBtn=document.getElementById('livePlayBtn'), finishBtn=document.getElementById('liveFinishBtn');
+  const cls = LC.phase==='done' ? 'done' : LC.phase;
+  bg.className = 'live-bg ' + cls;
+  status.className = 'live-status ' + cls;
+  status.textContent = LC.phase==='done' ? '¡LISTO!' : LC.phase==='work' ? 'TRABAJO' : LC.phase==='rest' ? 'DESCANSO' : (LC.type==='AMRAP' ? 'AMRAP' : 'FOR TIME');
+  clock.textContent = fmtClock(LC.remaining);
+  const isInterval = LC.type==='EMOM' || LC.type==='TABATA';
+  round.textContent = isInterval ? ('Ronda ' + LC.round + ' / ' + LC.totalRounds) : '';
+  if(isInterval){
+    exname.style.display = 'block';
+    const ex = currentLiveExercise();
+    exname.textContent = LC.phase==='rest' ? 'Descanso' : (ex ? ex.name : '');
+  } else {
+    exname.style.display = 'none';
+  }
+  list.style.display = isInterval ? 'none' : 'flex';
+  playBtn.style.display = LC.phase==='done' ? 'none' : 'inline-block';
+  playBtn.textContent = LC.running ? '⏸ Pausar' : '▶ Continuar';
+  finishBtn.style.display = (LC.type==='FORTIME' && LC.phase!=='done') ? 'inline-block' : 'none';
+}
+function startLiveTick(){
+  LC.running = true;
+  setLivePhaseUI();
+  clearInterval(liveInterval);
+  liveInterval = setInterval(liveTick, 1000);
+}
+function liveTick(){
+  if(!LC.running) return;
+  LC.remaining--;
+  if(LC.remaining <= 2 && LC.remaining >= 0) liveBeep(880,0.1);
+  if(LC.remaining <= 0){
+    advanceLivePhase();
+    return;
+  }
+  document.getElementById('liveClock').textContent = fmtClock(LC.remaining);
+}
+function advanceLivePhase(){
+  liveBeep(1318,0.25);
+  if(LC.type==='AMRAP' || LC.type==='FORTIME'){
+    finishLiveClass();
+    return;
+  }
+  if(LC.type==='EMOM'){
+    if(LC.round >= LC.totalRounds){ finishLiveClass(); return; }
+    LC.round++;
+    LC.remaining = LC.roundSec;
+    setLivePhaseUI();
+    return;
+  }
+  if(LC.type==='TABATA'){
+    if(LC.phase==='work'){
+      LC.phase = 'rest'; LC.remaining = LC.restSec;
+    } else {
+      if(LC.round >= LC.totalRounds){ finishLiveClass(); return; }
+      LC.round++;
+      LC.phase = 'work'; LC.remaining = LC.workSec;
+    }
+    setLivePhaseUI();
+    return;
+  }
+}
+function toggleLivePause(){
+  if(!LC || LC.phase==='done') return;
+  LC.running = !LC.running;
+  document.getElementById('livePlayBtn').textContent = LC.running ? '⏸ Pausar' : '▶ Continuar';
+}
+function resetLiveClass(){
+  if(!LC) return;
+  clearInterval(liveInterval);
+  if(LC.type==='AMRAP' || LC.type==='FORTIME'){ LC.remaining = LC.totalSec; LC.phase = 'neutral'; }
+  else if(LC.type==='EMOM'){ LC.round = 1; LC.remaining = LC.roundSec; LC.phase = 'work'; }
+  else if(LC.type==='TABATA'){ LC.round = 1; LC.remaining = LC.workSec; LC.phase = 'work'; }
+  runLivePrep();
+}
+function finishLiveClass(){
+  clearInterval(liveInterval);
+  LC.running = false;
+  LC.phase = 'done';
+  LC.remaining = 0;
+  setLivePhaseUI();
+}
+function closeLiveClass(){
+  clearInterval(liveInterval);
+  LC = null;
+  document.getElementById('view-live').style.display = 'none';
+}
+
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Escape') return;
+  if(document.getElementById('liveSetupBack').style.display === 'flex') closeLiveSetup();
+  else if(document.getElementById('view-live').style.display === 'block') closeLiveClass();
+  else closeProjection();
+});
 </script>
 </body>
 </html>
