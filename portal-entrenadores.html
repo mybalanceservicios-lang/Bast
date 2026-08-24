@@ -188,6 +188,8 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-tra
 .rt-watermark.show{opacity:1;transform:translateY(0);pointer-events:auto}
 .rt-watermark b{color:var(--mint);font-weight:800}
 .rt-watermark .dot{width:5px;height:5px;background:var(--mint);border-radius:1px;transform:rotate(45deg);flex-shrink:0}
+.rt-watermark.tv{padding:4px 9px;font-size:9px;gap:4px;right:12px;bottom:10px}
+.rt-watermark.tv .dot{width:4px;height:4px}
 
 /* ================= MODAL: configurar clase en vivo ================= */
 .modal-back{position:fixed;inset:0;background:rgba(3,5,4,.72);backdrop-filter:blur(3px);z-index:110;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -1104,6 +1106,7 @@ const rtWm = document.getElementById('rtWatermark');
 function updateWatermark(){
   if(!rtWm) return;
   const fullscreenOpen = document.getElementById('view-proj').style.display === 'block' || document.getElementById('view-live').style.display === 'block';
+  rtWm.classList.toggle('tv', fullscreenOpen);
   if(fullscreenOpen){ rtWm.classList.add('show'); return; }
   const nearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 4);
   rtWm.classList.toggle('show', nearBottom);
