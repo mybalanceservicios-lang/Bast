@@ -183,6 +183,12 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-tra
 .mini-btn.live{color:var(--mint);border-color:var(--mint-deep)}
 .mini-btn.live:hover{background:var(--mint-soft)}
 
+/* marca de agua — fija abajo a la derecha */
+.rt-watermark{position:fixed;right:16px;bottom:16px;z-index:200;display:inline-flex;align-items:center;gap:6px;font-family:var(--body);font-weight:800;font-size:11px;letter-spacing:.04em;color:var(--ink-2);background:var(--mint-soft);border:1px solid var(--mint-deep);padding:7px 13px;border-radius:20px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .3s ease,transform .3s ease}
+.rt-watermark.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.rt-watermark b{color:var(--mint);font-weight:800}
+.rt-watermark .dot{width:5px;height:5px;background:var(--mint);border-radius:1px;transform:rotate(45deg);flex-shrink:0}
+
 /* ================= MODAL: configurar clase en vivo ================= */
 .modal-back{position:fixed;inset:0;background:rgba(3,5,4,.72);backdrop-filter:blur(3px);z-index:110;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
@@ -447,6 +453,8 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-2);text-tra
     </div>
   </div>
 </div>
+
+<div class="rt-watermark" id="rtWatermark"><span class="dot"></span>Diseñado por <b>RT Design</b></div>
 
 <script>
 /* ============================================================
@@ -1085,6 +1093,25 @@ document.addEventListener('keydown', e=>{
   else if(document.getElementById('view-live').style.display === 'block') closeLiveClass();
   else closeProjection();
 });
+
+/* ---------- marca de agua: fija abajo a la derecha ----------
+   En las pantallas normales (login, panel, editor) solo aparece
+   al llegar al final de la página. En las pantallas de pantalla
+   completa para TV (proyección y clase en vivo), que no tienen
+   scroll propio, queda siempre visible.
+------------------------------------------------------------------ */
+const rtWm = document.getElementById('rtWatermark');
+function updateWatermark(){
+  if(!rtWm) return;
+  const fullscreenOpen = document.getElementById('view-proj').style.display === 'block' || document.getElementById('view-live').style.display === 'block';
+  if(fullscreenOpen){ rtWm.classList.add('show'); return; }
+  const nearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 4);
+  rtWm.classList.toggle('show', nearBottom);
+}
+window.addEventListener('scroll', updateWatermark, {passive:true});
+window.addEventListener('resize', updateWatermark);
+setInterval(updateWatermark, 400);
+updateWatermark();
 </script>
 </body>
 </html>
