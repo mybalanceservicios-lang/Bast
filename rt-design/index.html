@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RT Design · Diseño y desarrollo web</title>
+<meta name="description" content="RT Design — de tu idea a una solución digital. Diseñamos, desarrollamos y simplificamos sitios web, tiendas online y sistemas a medida.">
+<link rel="icon" type="image/png" href="assets/isotipo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0070fe;
+    --blue-dark:#0059cc;
+    --navy:#0d2341;
+    --navy-2:#122b52;
+    --red:#ef4444;
+    --amber:#f5a623;
+    --green:#22c55e;
+    --bg:#f6f8fc;
+    --card:#ffffff;
+    --ink:#0d2341;
+    --muted:#5b6b82;
+    --line:#e3e9f3;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{width:min(1120px,92%);margin:0 auto;}
+  .dots{display:inline-flex;gap:6px;}
+  .dots span{width:8px;height:8px;border-radius:50%;}
+  .dots span:nth-child(1){background:var(--red);}
+  .dots span:nth-child(2){background:var(--amber);}
+  .dots span:nth-child(3){background:var(--green);}
+
+  /* Header */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,248,252,.85);
+    backdrop-filter:saturate(180%) blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand img{height:36px;width:auto;}
+  .nav-links{display:flex;align-items:center;gap:28px;font-weight:600;font-size:.95rem;}
+  .nav-links a{color:var(--navy);opacity:.75;transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:11px 20px;border-radius:999px;font-weight:700;font-size:.92rem;
+    border:1px solid transparent;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    white-space:nowrap;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--blue);color:#fff;box-shadow:0 8px 20px -8px rgba(0,112,254,.6);}
+  .btn-primary:hover{background:var(--blue-dark);}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--navy);}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+  .btn-dark{background:var(--navy);color:#fff;}
+  .btn-dark:hover{background:var(--navy-2);}
+  .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .menu-toggle span{display:block;width:22px;height:2px;background:var(--navy);margin:5px 0;border-radius:2px;}
+
+  /* Hero */
+  .hero{padding:76px 0 60px;position:relative;overflow:hidden;}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    background:#fff;border:1px solid var(--line);padding:7px 14px;border-radius:999px;
+    font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:22px;
+  }
+  h1.disp{font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.06;font-weight:800;letter-spacing:-.02em;margin:0 0 20px;}
+  h1.disp .accent{color:var(--blue);}
+  .hero p.lead{font-size:1.12rem;color:var(--muted);max-width:46ch;margin:0 0 30px;}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:34px;}
+  .hero-stats{display:flex;gap:34px;flex-wrap:wrap;}
+  .hero-stats div b{display:block;font-size:1.5rem;font-weight:800;}
+  .hero-stats div span{font-size:.82rem;color:var(--muted);}
+
+  .mock{
+    background:var(--navy);border-radius:20px;padding:14px;box-shadow:0 30px 60px -25px rgba(13,35,65,.45);
+  }
+  .mock-bar{display:flex;align-items:center;gap:8px;padding:4px 4px 14px;}
+  .mock-bar .dots span{width:9px;height:9px;}
+  .mock-url{margin-left:10px;background:rgba(255,255,255,.08);color:#c9d6ea;font-size:.72rem;padding:5px 12px;border-radius:8px;flex:1;}
+  .mock-body{background:#fff;border-radius:12px;padding:20px;min-height:280px;}
+  .mock-line{height:12px;border-radius:6px;background:var(--line);margin-bottom:10px;}
+  .mock-line.w60{width:60%;}
+  .mock-line.w40{width:40%;}
+  .mock-blocks{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;}
+  .mock-blocks div{height:60px;border-radius:10px;}
+  .mock-blocks div:nth-child(1){background:linear-gradient(135deg,var(--blue),#3b9bff);}
+  .mock-blocks div:nth-child(2){background:linear-gradient(135deg,var(--amber),#ffcf6b);}
+  .mock-blocks div:nth-child(3){background:linear-gradient(135deg,var(--green),#7de3a5);}
+  .cursor-badge{
+    position:absolute;bottom:-16px;right:-16px;background:var(--blue);color:#fff;
+    width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-size:1.3rem;box-shadow:0 14px 24px -10px rgba(0,112,254,.6);
+  }
+  .mock-wrap{position:relative;}
+
+  /* Section shared */
+  section{padding:88px 0;scroll-margin-top:76px;}
+  .sec-h{max-width:640px;margin:0 auto 48px;text-align:center;}
+  .tag{display:inline-block;font-size:.8rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:12px;}
+  .sec-h h2{font-size:clamp(1.7rem,3.4vw,2.4rem);font-weight:800;letter-spacing:-.01em;margin:0 0 12px;}
+  .sec-h p{color:var(--muted);font-size:1.02rem;margin:0;}
+
+  /* Servicios */
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 26px;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -22px rgba(13,35,65,.25);border-color:transparent;}
+  .card .ic{
+    width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    font-size:1.35rem;margin-bottom:18px;background:rgba(0,112,254,.1);color:var(--blue);
+  }
+  .card h3{margin:0 0 10px;font-size:1.12rem;font-weight:700;}
+  .card p{margin:0;color:var(--muted);font-size:.94rem;}
+
+  /* Proyectos */
+  .proyectos{background:var(--navy);color:#fff;}
+  .proyectos .tag{color:#7fb6ff;}
+  .proyectos .sec-h p{color:#aebedc;}
+  .proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .proj-card{
+    background:var(--navy-2);border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,.08);
+    transition:transform .2s ease;
+  }
+  .proj-card:hover{transform:translateY(-4px);}
+  .proj-thumb{height:170px;position:relative;display:flex;align-items:center;justify-content:center;}
+  .proj-thumb .dots{position:absolute;top:14px;left:16px;}
+  .proj-thumb .glyph{font-size:2.6rem;}
+  .proj-card:nth-child(1) .proj-thumb{background:linear-gradient(135deg,#0070fe,#12345f);}
+  .proj-card:nth-child(2) .proj-thumb{background:linear-gradient(135deg,#f5a623,#12345f);}
+  .proj-card:nth-child(3) .proj-thumb{background:linear-gradient(135deg,#22c55e,#12345f);}
+  .proj-card:nth-child(4) .proj-thumb{background:linear-gradient(135deg,#ef4444,#12345f);}
+  .proj-info{padding:20px 22px 24px;}
+  .proj-info .kicker{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#7fb6ff;margin-bottom:8px;display:block;}
+  .proj-info h3{margin:0 0 8px;font-size:1.08rem;font-weight:700;}
+  .proj-info p{margin:0;color:#aebedc;font-size:.92rem;}
+  .proj-note{
+    grid-column:1/-1;text-align:center;color:#aebedc;font-size:.9rem;padding-top:6px;
+  }
+
+  /* Proceso */
+  .proceso-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;counter-reset:step;}
+  .step{position:relative;padding-top:8px;}
+  .step .num{
+    display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;
+    border-radius:11px;background:var(--navy);color:#fff;font-weight:800;margin-bottom:16px;
+  }
+  .step h4{margin:0 0 8px;font-size:1.02rem;font-weight:700;}
+  .step p{margin:0;color:var(--muted);font-size:.9rem;}
+
+  /* Contacto */
+  .contacto{background:linear-gradient(180deg,#fff,var(--bg));}
+  .contact-card{
+    background:var(--navy);color:#fff;border-radius:24px;padding:52px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .contact-card:before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(600px 300px at 85% 15%,rgba(0,112,254,.35),transparent 70%);
+    pointer-events:none;
+  }
+  .contact-card h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin:0 0 14px;position:relative;}
+  .contact-card p{color:#c9d6ea;max-width:44ch;margin:0 0 26px;position:relative;}
+  .contact-ctas{display:flex;flex-wrap:wrap;gap:12px;position:relative;}
+  .contact-links{display:flex;flex-direction:column;gap:16px;position:relative;}
+  .contact-links a{
+    display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    padding:16px 18px;border-radius:14px;font-weight:600;transition:background .2s ease,border-color .2s ease;
+  }
+  .contact-links a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);}
+  .contact-links .ic{
+    width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.12);font-size:1.05rem;flex-shrink:0;
+  }
+  .contact-links small{display:block;color:#aebedc;font-weight:500;font-size:.78rem;}
+
+  /* Footer */
+  footer{background:var(--navy);color:#c9d6ea;padding:44px 0 28px;border-top:1px solid rgba(255,255,255,.08);}
+  .foot-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;margin-bottom:26px;}
+  .foot-top img{height:32px;}
+  .foot-social{display:flex;gap:14px;}
+  .foot-social a{
+    width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;
+    transition:background .2s ease;font-size:1rem;
+  }
+  .foot-social a:hover{background:rgba(255,255,255,.18);}
+  .foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.82rem;color:#7f93b3;border-top:1px solid rgba(255,255,255,.08);padding-top:20px;}
+
+  /* Reveal animation */
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr;}
+    .mock-wrap{order:-1;}
+    .services-grid{grid-template-columns:repeat(2,1fr);}
+    .proj-grid{grid-template-columns:1fr;}
+    .proceso-steps{grid-template-columns:repeat(2,1fr);}
+    .contact-card{grid-template-columns:1fr;padding:34px 24px;}
+  }
+  @media (max-width:640px){
+    .nav-links{
+      position:fixed;inset:64px 16px auto 16px;background:#fff;border:1px solid var(--line);
+      border-radius:16px;padding:18px;flex-direction:column;align-items:flex-start;gap:16px;
+      box-shadow:0 20px 40px -20px rgba(13,35,65,.3);
+      display:none;
+    }
+    .nav-links.open{display:flex;}
+    .nav-links .btn{width:100%;justify-content:center;}
+    .menu-toggle{display:block;}
+    .services-grid{grid-template-columns:1fr;}
+    .proceso-steps{grid-template-columns:1fr;}
+    .hero-stats{gap:24px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top"><img src="assets/logo-horizontal.png" alt="RT Design"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#servicios">Servicios</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#proceso">Cómo trabajamos</a>
+      <a href="#contacto">Contacto</a>
+      <a class="btn btn-primary" href="https://wa.me/5491141627425" target="_blank" rel="noopener">WhatsApp →</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span class="dots"><span></span><span></span><span></span></span> Diseño que impulsa. Sistemas que simplifican.</span>
+      <h1 class="disp">De tu idea a una <span class="accent">solución digital</span></h1>
+      <p class="lead">Diseñamos. Desarrollamos. Simplificamos. Creamos sitios web, tiendas online y sistemas a medida para que tu negocio crezca sin fricciones.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://wa.me/5491141627425" target="_blank" rel="noopener">💬 Hablemos por WhatsApp</a>
+        <a class="btn btn-ghost" href="#proyectos">Ver proyectos</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>100%</b><span>Diseño a medida</span></div>
+        <div><b>Rápido</b><span>Entrega y puesta en marcha</span></div>
+        <div><b>Full</b><span>Diseño + desarrollo + soporte</span></div>
+      </div>
+    </div>
+    <div class="mock-wrap">
+      <div class="mock">
+        <div class="mock-bar">
+          <span class="dots"><span></span><span></span><span></span></span>
+          <span class="mock-url">rtdesign.com.ar/tu-negocio</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-line w60" style="height:20px;width:70%;"></div>
+          <div class="mock-line w40" style="margin-top:14px;"></div>
+          <div class="mock-line" style="width:85%;"></div>
+          <div class="mock-blocks">
+            <div></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cursor-badge">🖱️</div>
+    </div>
+  </div>
+</section>
+
+<section id="servicios">
+  <div class="wrap">
+    <div class="sec-h reveal">
+      <span class="tag">Tecnología diseñada para crecer</span>
+      <h2>Servicios pensados para tu marca</h2>
+      <p>Desde una landing page hasta una tienda online completa: te acompañamos en todo el proceso.</p>
+    </div>
+    <div class="services-grid">
+      <div class="card reveal">
+        <div class="ic">🖥️</div>
+        <h3>Diseño web</h3>
+        <p>Sitios institucionales con diseño moderno, responsive y adaptado a la identidad de tu marca.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">🛒</div>
+        <h3>Tiendas online</h3>
+        <p>E-commerce a medida para vender tus productos con medios de pago y catálogo fáciles de administrar.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">🚀</div>
+        <h3>Landing pages</h3>
+        <p>Páginas de aterrizaje enfocadas en conversión, ideales para campañas y lanzamientos.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">🎨</div>
+        <h3>Identidad visual</h3>
+        <p>Logo, paleta de colores y piezas gráficas para que tu marca se vea consistente en todos lados.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">🔧</div>
+        <h3>Mantenimiento &amp; soporte</h3>
+        <p>Actualizaciones, cambios de contenido y acompañamiento continuo una vez publicado tu sitio.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">📈</div>
+        <h3>SEO &amp; performance</h3>
+        <p>Sitios rápidos y optimizados para que te encuentren en Google y la experiencia sea la mejor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="proyectos" id="proyectos">
+  <div class="wrap">
+    <div class="sec-h reveal">
+      <span class="tag">Portfolio</span>
+      <h2>Tipos de proyectos que desarrollamos</h2>
+      <p>Cada proyecto se adapta al rubro y objetivos del cliente. Estos son algunos formatos en los que trabajamos.</p>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-card reveal">
+        <div class="proj-thumb"><span class="dots"><span></span><span></span><span></span></span><span class="glyph">🏢</span></div>
+        <div class="proj-info">
+          <span class="kicker">Sitio institucional</span>
+          <h3>Presencia web para negocios y profesionales</h3>
+          <p>Páginas claras con información de servicios, contacto y ubicación para transmitir confianza.</p>
+        </div>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-thumb"><span class="dots"><span></span><span></span><span></span></span><span class="glyph">🛍️</span></div>
+        <div class="proj-info">
+          <span class="kicker">E-commerce</span>
+          <h3>Tiendas online listas para vender</h3>
+          <p>Catálogo de productos, carrito de compras y checkout simple para cualquier tipo de rubro.</p>
+        </div>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-thumb"><span class="dots"><span></span><span></span><span></span></span><span class="glyph">📣</span></div>
+        <div class="proj-info">
+          <span class="kicker">Landing page</span>
+          <h3>Páginas para campañas y lanzamientos</h3>
+          <p>Diseñadas para convertir: una idea, una oferta, un solo llamado a la acción claro.</p>
+        </div>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-thumb"><span class="dots"><span></span><span></span><span></span></span><span class="glyph">📰</span></div>
+        <div class="proj-info">
+          <span class="kicker">Blog / portal de contenido</span>
+          <h3>Espacios para compartir contenido propio</h3>
+          <p>Estructura simple para publicar novedades, artículos o actualizaciones de tu negocio.</p>
+        </div>
+      </div>
+      <p class="proj-note">¿Tenés trabajos propios para mostrar acá? Contanos y armamos esta sección con tus proyectos reales.</p>
+    </div>
+  </div>
+</section>
+
+<section id="proceso">
+  <div class="wrap">
+    <div class="sec-h reveal">
+      <span class="tag">Cómo trabajamos</span>
+      <h2>Un proceso simple, de punta a punta</h2>
+      <p>Te acompañamos desde la primera charla hasta que tu web está online.</p>
+    </div>
+    <div class="proceso-steps">
+      <div class="step reveal">
+        <span class="num">1</span>
+        <h4>Charlamos</h4>
+        <p>Nos contás tu idea, tu negocio y qué necesitás lograr con la web.</p>
+      </div>
+      <div class="step reveal">
+        <span class="num">2</span>
+        <h4>Diseñamos</h4>
+        <p>Proponemos una estética acorde a tu marca y la validamos juntos.</p>
+      </div>
+      <div class="step reveal">
+        <span class="num">3</span>
+        <h4>Desarrollamos</h4>
+        <p>Construimos el sitio, lo probamos y ajustamos los detalles.</p>
+      </div>
+      <div class="step reveal">
+        <span class="num">4</span>
+        <h4>Lanzamos</h4>
+        <p>Publicamos tu web y quedamos disponibles para el soporte que necesites.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contacto" id="contacto">
+  <div class="wrap">
+    <div class="contact-card reveal">
+      <div>
+        <h2>¿Hacemos tu web?</h2>
+        <p>Contanos sobre tu proyecto y te respondemos a la brevedad. Sin vueltas, directo por WhatsApp.</p>
+        <div class="contact-ctas">
+          <a class="btn btn-primary" href="https://wa.me/5491141627425" target="_blank" rel="noopener">💬 Escribinos por WhatsApp</a>
+          <a class="btn" style="background:rgba(255,255,255,.1);color:#fff;" href="https://instagram.com/rt.designweb" target="_blank" rel="noopener">Ver Instagram</a>
+        </div>
+      </div>
+      <div class="contact-links">
+        <a href="https://wa.me/5491141627425" target="_blank" rel="noopener">
+          <span class="ic">💬</span>
+          <span><small>WhatsApp</small>+54 9 11 4162-7425</span>
+        </a>
+        <a href="https://instagram.com/rt.designweb" target="_blank" rel="noopener">
+          <span class="ic">📷</span>
+          <span><small>Instagram</small>@rt.designweb</span>
+        </a>
+        <a href="mailto:mybalanceservicios@gmail.com">
+          <span class="ic">✉️</span>
+          <span><small>Email</small>mybalanceservicios@gmail.com</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <img src="assets/logo-dark.png" alt="RT Design">
+      <div class="foot-social">
+        <a href="https://instagram.com/rt.designweb" target="_blank" rel="noopener" aria-label="Instagram">📷</a>
+        <a href="https://wa.me/5491141627425" target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
+        <a href="mailto:mybalanceservicios@gmail.com" aria-label="Email">✉️</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="year"></span> RT Design. Todos los derechos reservados.</span>
+      <span>Diseño &amp; desarrollo por RT Design</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const toggle = document.getElementById('menuToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => links.classList.toggle('open'));
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
