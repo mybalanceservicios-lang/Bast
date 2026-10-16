@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>BAST · Asistente IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070908; --bg-2:#0C100E; --surface:#111614; --surface-2:#161C19;
+    --ink:#EAF3EE; --ink-2:#9DB2A8; --ink-3:#63736C;
+    --line:#1D2521; --line-2:#161D18;
+    --mint:#7DE9C2; --mint-2:#38C9A0; --mint-deep:#1E9E7C; --mint-soft:#0E241C;
+    --red:#F08A8A; --red-soft:#2a1212; --amber:#F2C66D; --amber-soft:#2a2110;
+    --disp:"Big Shoulders Display","Impact","Arial Narrow",sans-serif;
+    --body:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.5;-webkit-font-smoothing:antialiased}
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  .disp{font-family:var(--disp);text-transform:uppercase;font-weight:900;letter-spacing:.02em}
+  .muted{color:var(--ink-3)}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:900;font-size:24px;letter-spacing:.12em;text-transform:uppercase}
+  .logo .mk{width:28px;height:28px;border:2px solid var(--mint);border-radius:50%;display:grid;place-items:center;color:var(--mint);font-size:12px}
+  .logo small{font-family:var(--body);font-size:11px;letter-spacing:.14em;color:var(--mint);font-weight:800}
+
+  /* login */
+  #login{min-height:100vh;display:grid;place-items:center;padding:16px}
+  .login-card{width:100%;max-width:360px;background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:28px}
+  .login-card h1{font-size:34px;margin:22px 0 6px}
+  .login-card p{margin:0 0 20px;color:var(--ink-2);font-size:14px}
+  .field{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 12px;outline:none}
+  .field:focus{border-color:var(--mint-deep)}
+  .btn{border:0;border-radius:11px;background:var(--mint);color:#04140F;font-weight:800;padding:11px 16px;transition:.15s}
+  .btn:hover{background:#fff}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn-ghost{border:1px solid var(--line);background:none;color:var(--ink-2);border-radius:11px;padding:9px 13px;font-weight:700;font-size:13px}
+  .btn-ghost:hover{border-color:var(--mint);color:var(--mint)}
+  .err{color:var(--red);font-size:13px;min-height:18px;margin-top:8px}
+
+  /* layout */
+  #app{display:none;min-height:100vh}
+  #app.on{display:grid;grid-template-columns:230px 1fr}
+  aside{border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:22px;background:var(--bg-2)}
+  nav{display:flex;flex-direction:column;gap:4px}
+  nav button{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--ink-2);text-align:left;padding:10px 12px;border-radius:10px;font-weight:700;font-size:14px}
+  nav button:hover{background:var(--surface);color:var(--ink)}
+  nav button.on{background:var(--mint-soft);color:var(--mint)}
+  nav .badge{margin-left:auto;background:var(--surface-2);color:var(--ink-2);font-size:11px;padding:1px 7px;border-radius:20px}
+  nav button.on .badge{background:var(--mint-deep);color:#04140F}
+  .aside-foot{margin-top:auto;display:flex;flex-direction:column;gap:6px}
+  .aside-foot .btn-ghost{text-align:left}
+  main{padding:28px 32px 48px;min-width:0}
+  .head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .head h2{font-size:40px;line-height:1}
+  .head p{margin:4px 0 0;color:var(--ink-2);font-size:14px}
+  .head .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  section.view{display:none}
+  section.view.on{display:block}
+
+  .grid{display:grid;gap:14px}
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .card{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .card h3{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:800;margin:0 0 12px}
+  .kpi .v{font-family:var(--disp);font-weight:900;font-size:44px;line-height:1}
+  .kpi .l{color:var(--ink-2);font-size:13px;margin-top:6px}
+  .kpi.alerta .v{color:var(--red)}
+  .two{grid-template-columns:1.2fr 1fr;margin-top:14px}
+  .empty{color:var(--ink-3);font-size:14px;padding:6px 0}
+
+  /* listas */
+  .row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+  .row:last-child{border-bottom:0}
+  .row .main{flex:1;min-width:0}
+  .row .t{font-weight:700}
+  .row .d{color:var(--ink-2);font-size:13px;margin-top:2px;white-space:pre-wrap}
+  .row .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .chip{font-size:11px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:20px;background:var(--surface-2);color:var(--ink-2);text-transform:uppercase}
+  .chip.alta,.chip.vencida,.chip.alerta{background:var(--red-soft);color:var(--red)}
+  .chip.media{background:var(--amber-soft);color:var(--amber)}
+  .chip.ia,.chip.estrategia{background:var(--mint-soft);color:var(--mint)}
+  .check{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--ink-3);background:none;flex-shrink:0;margin-top:1px;display:grid;place-items:center;color:#04140F;font-size:13px;font-weight:900}
+  .check.on{background:var(--mint);border-color:var(--mint)}
+  .row.hecha .t{text-decoration:line-through;color:var(--ink-3)}
+  .x{border:0;background:none;color:var(--ink-3);font-size:14px;padding:2px 6px;border-radius:6px}
+  .x:hover{color:var(--red);background:var(--red-soft)}
+  .tabs{display:flex;gap:6px;margin-bottom:12px}
+  .tabs button{border:1px solid var(--line);background:none;color:var(--ink-2);border-radius:20px;padding:5px 12px;font-size:12.5px;font-weight:700}
+  .tabs button.on{border-color:var(--mint);color:var(--mint)}
+
+  .bar{height:8px;border-radius:8px;background:var(--surface-2);overflow:hidden;margin-top:8px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mint-deep),var(--mint));border-radius:8px}
+  .obj-top{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+  .obj-top b{font-weight:700}
+  .obj-top span{color:var(--ink-2);white-space:nowrap}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:800;padding:8px 6px;border-bottom:1px solid var(--line)}
+  td{padding:10px 6px;border-bottom:1px solid var(--line-2)}
+  .up{color:var(--mint)} .down{color:var(--red)}
+
+  form.add{display:grid;gap:8px;grid-template-columns:2fr 1fr 1fr auto;margin-bottom:6px}
+  form.add.m{grid-template-columns:2fr 1fr 1fr 1fr auto}
+  form.add.o{grid-template-columns:2fr 1fr 1fr 1fr auto}
+
+  .notas{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .nota .top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .nota .top b{flex:1}
+  .nota .c{color:var(--ink-2);font-size:14px;white-space:pre-wrap}
+
+  /* chat */
+  .chat{display:flex;flex-direction:column;height:calc(100vh - 160px);min-height:420px}
+  .msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px 12px}
+  .m{max-width:78%;padding:12px 15px;border-radius:15px;font-size:14.5px;line-height:1.55;word-wrap:break-word}
+  .m.bot{background:var(--bg-2);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+  .m.yo{background:var(--mint);color:#04140F;font-weight:600;align-self:flex-end;border-bottom-right-radius:4px;white-space:pre-wrap}
+  .m.error{background:var(--red-soft);color:var(--red);align-self:flex-start}
+  .m h4{margin:10px 0 4px;font-size:15px;color:var(--mint)}
+  .m h4:first-child{margin-top:0}
+  .m ul{margin:4px 0;padding-left:18px}
+  .m p{margin:6px 0}
+  .cambios{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--mint)}
+  .typing{display:inline-flex;gap:4px}.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-3);animation:b 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes b{0%,80%,100%{opacity:.3}40%{opacity:1}}
+  .quick{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .quick button{border:1px solid var(--line);background:none;color:var(--ink-2);border-radius:20px;padding:6px 12px;font-size:12.5px;font-weight:700}
+  .quick button:hover{border-color:var(--mint);color:var(--mint)}
+  .composer{display:flex;gap:8px}
+  .composer textarea{flex:1;resize:none;height:52px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;outline:none}
+  .composer textarea:focus{border-color:var(--mint-deep)}
+
+  @media(max-width:980px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}}
+  @media(max-width:760px){
+    #app.on{grid-template-columns:minmax(0,1fr)}
+    aside{min-width:0;position:sticky;top:0;z-index:10;height:auto;padding:12px 16px;gap:10px;flex-direction:column}
+    nav{flex-direction:row;overflow-x:auto;gap:4px}
+    nav button{white-space:nowrap;padding:8px 10px;font-size:13px}
+    .aside-foot{display:none}
+    main{padding:20px 16px 40px}
+    .head h2{font-size:32px}
+    form.add,form.add.m,form.add.o{grid-template-columns:1fr 1fr}
+    form.add input:first-child{grid-column:1/-1}
+    .m{max-width:92%}
+    .chat{height:calc(100vh - 230px)}
+  }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form class="login-card" id="loginForm">
+    <div class="logo"><span class="mk">◎</span>BAST <small>IA</small></div>
+    <h1 class="disp">Asistente del negocio</h1>
+    <p>Tu empleado y estratega con IA. Ingresá la clave del panel.</p>
+    <input class="field" id="clave" type="password" placeholder="Clave" autocomplete="current-password" required>
+    <label style="display:flex;gap:8px;align-items:center;margin:12px 0 16px;font-size:13px;color:var(--ink-2)"><input type="checkbox" id="recordar"> Recordar en este dispositivo</label>
+    <button class="btn" style="width:100%">Entrar</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</div>
+
+<div id="app">
+  <aside>
+    <div class="logo"><span class="mk">◎</span>BAST <small>IA</small></div>
+    <nav id="nav">
+      <button data-v="resumen" class="on">◉ Resumen</button>
+      <button data-v="pendientes">☑ Pendientes <span class="badge" id="bPend">0</span></button>
+      <button data-v="metricas">↗ Progreso</button>
+      <button data-v="estrategia">◆ Estrategia <span class="badge" id="bNotas">0</span></button>
+      <button data-v="chat">✦ Hablar con la IA</button>
+    </nav>
+    <div class="aside-foot">
+      <button class="btn-ghost" id="exportar">⬇ Exportar datos</button>
+      <button class="btn-ghost" id="importarBtn">⬆ Importar datos</button>
+      <input type="file" id="importar" accept="application/json" hidden>
+      <button class="btn-ghost" id="salir">Salir</button>
+    </div>
+  </aside>
+
+  <main>
+    <!-- RESUMEN -->
+    <section class="view on" id="v-resumen">
+      <div class="head">
+        <div><h2 class="disp">Resumen</h2><p id="saludo"></p></div>
+        <div class="acts"><button class="btn" data-preg="informe">✦ Pedir informe a la IA</button></div>
+      </div>
+      <div class="grid kpis">
+        <div class="card kpi"><div class="v" id="kPend">0</div><div class="l">Tareas pendientes</div></div>
+        <div class="card kpi" id="kVencCard"><div class="v" id="kVenc">0</div><div class="l">Vencidas o para hoy</div></div>
+        <div class="card kpi"><div class="v" id="kObj">0%</div><div class="l">Avance promedio de objetivos</div></div>
+        <div class="card kpi"><div class="v" id="kHechas">0</div><div class="l">Tareas hechas esta semana</div></div>
+      </div>
+      <div class="grid two">
+        <div class="card"><h3>Lo próximo</h3><div id="rTareas"></div></div>
+        <div class="card"><h3>Objetivos</h3><div id="rObj"></div></div>
+      </div>
+      <div class="card" style="margin-top:14px"><h3>Última estrategia de la IA</h3><div id="rNota"></div></div>
+    </section>
+
+    <!-- PENDIENTES -->
+    <section class="view" id="v-pendientes">
+      <div class="head">
+        <div><h2 class="disp">Pendientes</h2><p>Tareas tuyas y las que crea la IA.</p></div>
+        <div class="acts"><button class="btn-ghost" data-preg="hoy">✦ ¿Qué hago hoy?</button></div>
+      </div>
+      <div class="card">
+        <form class="add" id="fTarea">
+          <input class="field" name="titulo" placeholder="Nueva tarea…" required>
+          <select class="field" name="prioridad"><option value="alta">Alta</option><option value="media" selected>Media</option><option value="baja">Baja</option></select>
+          <input class="field" name="fecha_limite" type="date">
+          <button class="btn">Agregar</button>
+        </form>
+        <div class="tabs" id="tabsTareas"><button data-f="pendiente" class="on">Pendientes</button><button data-f="hecha">Hechas</button><button data-f="todas">Todas</button></div>
+        <div id="lTareas"></div>
+      </div>
+    </section>
+
+    <!-- PROGRESO -->
+    <section class="view" id="v-metricas">
+      <div class="head">
+        <div><h2 class="disp">Progreso</h2><p>Objetivos y números del negocio.</p></div>
+        <div class="acts"><button class="btn-ghost" data-preg="numeros">✦ Analizar mis números</button></div>
+      </div>
+      <div class="card">
+        <h3>Objetivos</h3>
+        <form class="add o" id="fObj">
+          <input class="field" name="titulo" placeholder="Ej: Llegar a 400 socios activos" required>
+          <input class="field" name="meta" type="number" step="any" placeholder="Meta" required>
+          <input class="field" name="unidad" placeholder="Unidad">
+          <input class="field" name="fecha_limite" type="date">
+          <button class="btn">Agregar</button>
+        </form>
+        <div id="lObj"></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Métricas</h3>
+        <form class="add m" id="fMet">
+          <input class="field" name="metrica" placeholder="Ej: socios activos" list="metricasConocidas" required>
+          <input class="field" name="valor" type="number" step="any" placeholder="Valor" required>
+          <input class="field" name="unidad" placeholder="Unidad">
+          <input class="field" name="fecha" type="date" required>
+          <button class="btn">Registrar</button>
+        </form>
+        <datalist id="metricasConocidas"></datalist>
+        <div id="lMet" style="overflow-x:auto"></div>
+      </div>
+    </section>
+
+    <!-- ESTRATEGIA -->
+    <section class="view" id="v-estrategia">
+      <div class="head">
+        <div><h2 class="disp">Estrategia</h2><p>Planes, ideas y alertas que guarda la IA.</p></div>
+        <div class="acts"><button class="btn" data-preg="plan">✦ Armar plan del mes</button></div>
+      </div>
+      <div class="grid notas" id="lNotas"></div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="view" id="v-chat">
+      <div class="head">
+        <div><h2 class="disp">Hablar con la IA</h2><p>Pedile informes, ideas o que te organice el día. Puede crear tareas, objetivos y notas.</p></div>
+        <div class="acts"><button class="btn-ghost" id="nuevaConv">Nueva conversación</button></div>
+      </div>
+      <div class="chat">
+        <div class="msgs" id="msgs"></div>
+        <div class="quick">
+          <button data-preg="informe">Informe de progreso</button>
+          <button data-preg="hoy">¿Qué hago hoy?</button>
+          <button data-preg="plan">Plan del mes</button>
+          <button data-preg="numeros">Analizar números</button>
+          <button data-preg="retencion">Ideas para retener socios</button>
+        </div>
+        <form class="composer" id="fChat">
+          <textarea id="txt" placeholder="Ej: este mes tuvimos 32 altas y 11 bajas, ¿cómo venimos?" required></textarea>
+          <button class="btn" id="enviar">Enviar</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const API = "/api/ia";
+  const K_ESTADO = "bast_ia_estado", K_CHAT = "bast_ia_chat", K_CLAVE = "bast_ia_clave";
+  const PREGUNTAS = {
+    informe: "Dame el informe de progreso de hoy: cómo vienen los objetivos y las métricas, qué está bien, qué preocupa y las 3 prioridades.",
+    hoy: "¿Qué tengo que hacer hoy? Ordená mis pendientes por prioridad y decime por dónde arrancar.",
+    plan: "Armá el plan estratégico del mes para BAST con acciones concretas. Guardalo como nota de estrategia y creá las tareas necesarias.",
+    numeros: "Analizá mis números registrados: tendencias, alertas y qué métricas me faltan medir.",
+    retencion: "Dame ideas concretas para mejorar la retención de socios en BAST y creá tareas para las 2 mejores.",
+  };
+
+  const $ = (s) => document.querySelector(s);
+  const hoy = () => new Date().toISOString().slice(0, 10);
+  const id = () => Math.random().toString(36).slice(2, 10);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmtFecha = (f) => f ? new Date(f + "T12:00:00").toLocaleDateString("es-AR", { day: "numeric", month: "short" }) : "";
+  const num = (n) => Number(n).toLocaleString("es-AR");
+
+  const leer = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch (e) { return def; } };
+  const escribir = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+  let estado = Object.assign({ tareas: [], objetivos: [], metricas: [], notas: [] }, leer(K_ESTADO, {}));
+  let chat = leer(K_CHAT, []);
+  let clave = sessionStorage.getItem(K_CLAVE) || leer(K_CLAVE, null);
+  let filtro = "pendiente";
+
+  const guardar = () => { escribir(K_ESTADO, estado); render(); };
+
+  // ---- login -----------------------------------------------------------
+  function entrar() { $("#login").style.display = "none"; $("#app").classList.add("on"); render(); pintarChat(); }
+  $("#loginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    clave = $("#clave").value;
+    try { sessionStorage.setItem(K_CLAVE, clave); } catch (e) {}
+    if ($("#recordar").checked) escribir(K_CLAVE, clave);
+    entrar();
+  });
+  $("#salir").addEventListener("click", () => {
+    try { sessionStorage.removeItem(K_CLAVE); localStorage.removeItem(K_CLAVE); } catch (e) {}
+    location.reload();
+  });
+  if (clave) entrar();
+
+  // ---- navegación ------------------------------------------------------
+  function ir(v) {
+    document.querySelectorAll("#nav button").forEach((b) => b.classList.toggle("on", b.dataset.v === v));
+    document.querySelectorAll("section.view").forEach((s) => s.classList.toggle("on", s.id === "v-" + v));
+    if (v === "chat") { const m = $("#msgs"); m.scrollTop = m.scrollHeight; $("#txt").focus(); }
+  }
+  $("#nav").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) ir(b.dataset.v); });
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-preg]");
+    if (b) { ir("chat"); preguntar(PREGUNTAS[b.dataset.preg]); }
+  });
+
+  // ---- render ----------------------------------------------------------
+  const prioOrden = { alta: 0, media: 1, baja: 2 };
+  const vencida = (t) => t.estado === "pendiente" && t.fecha_limite && t.fecha_limite <= hoy();
+  const ordenarTareas = (ts) => ts.slice().sort((a, b) =>
+    (vencida(b) - vencida(a)) || (prioOrden[a.prioridad] - prioOrden[b.prioridad]) || String(a.fecha_limite || "9").localeCompare(String(b.fecha_limite || "9")));
+  const pct = (o) => o.meta ? Math.max(0, Math.min(100, Math.round((Number(o.actual) || 0) / o.meta * 100))) : 0;
+
+  function filaTarea(t, editable) {
+    const chips = [
+      `<span class="chip ${t.prioridad}">${esc(t.prioridad)}</span>`,
+      vencida(t) ? `<span class="chip vencida">${t.fecha_limite < hoy() ? "vencida" : "hoy"}</span>` : (t.fecha_limite ? `<span class="chip">${fmtFecha(t.fecha_limite)}</span>` : ""),
+      t.responsable ? `<span class="chip">${esc(t.responsable)}</span>` : "",
+      t.origen === "ia" ? `<span class="chip ia">✦ IA</span>` : "",
+    ].join("");
+    return `<div class="row ${t.estado === "hecha" ? "hecha" : ""}">
+      <button class="check ${t.estado === "hecha" ? "on" : ""}" data-toggle="${t.id}" aria-label="Marcar como hecha">${t.estado === "hecha" ? "✓" : ""}</button>
+      <div class="main"><div class="t">${esc(t.titulo)}</div>${t.detalle ? `<div class="d">${esc(t.detalle)}</div>` : ""}<div class="meta">${chips}</div></div>
+      ${editable ? `<button class="x" data-del-tarea="${t.id}" aria-label="Eliminar">✕</button>` : ""}
+    </div>`;
+  }
+  function filaObj(o, editable) {
+    return `<div class="row"><div class="main">
+      <div class="obj-top"><b>${esc(o.titulo)}</b><span>${num(o.actual || 0)} / ${num(o.meta)} ${esc(o.unidad || "")} · ${pct(o)}%</span></div>
+      <div class="bar"><i style="width:${pct(o)}%"></i></div>
+      ${o.fecha_limite ? `<div class="meta"><span class="chip">hasta ${fmtFecha(o.fecha_limite)}</span></div>` : ""}
+    </div>${editable ? `<button class="x" data-edit-obj="${o.id}" title="Cargar avance">✎</button><button class="x" data-del-obj="${o.id}" aria-label="Eliminar">✕</button>` : ""}</div>`;
+  }
+
+  function render() {
+    const pend = estado.tareas.filter((t) => t.estado === "pendiente");
+    const venc = pend.filter(vencida);
+    const semana = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+    const hechas = estado.tareas.filter((t) => t.estado === "hecha" && (t.hecha_el || t.creada) >= semana);
+    const prom = estado.objetivos.length ? Math.round(estado.objetivos.reduce((s, o) => s + pct(o), 0) / estado.objetivos.length) : 0;
+
+    $("#saludo").textContent = new Date().toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
+    $("#kPend").textContent = pend.length;
+    $("#kVenc").textContent = venc.length;
+    $("#kVencCard").classList.toggle("alerta", venc.length > 0);
+    $("#kObj").textContent = prom + "%";
+    $("#kHechas").textContent = hechas.length;
+    $("#bPend").textContent = pend.length;
+    $("#bNotas").textContent = estado.notas.length;
+
+    $("#rTareas").innerHTML = pend.length ? ordenarTareas(pend).slice(0, 5).map((t) => filaTarea(t, false)).join("") : `<div class="empty">Sin pendientes. Pedile a la IA un plan para arrancar.</div>`;
+    $("#rObj").innerHTML = estado.objetivos.length ? estado.objetivos.map((o) => filaObj(o, false)).join("") : `<div class="empty">Todavía no hay objetivos. Cargalos en Progreso o pedíselos a la IA.</div>`;
+    const ult = estado.notas.filter((n) => n.tipo === "estrategia").slice(-1)[0] || estado.notas.slice(-1)[0];
+    $("#rNota").innerHTML = ult ? `<div class="t" style="font-weight:700">${esc(ult.titulo)}</div><div class="d muted" style="white-space:pre-wrap;font-size:14px;margin-top:6px">${esc(ult.contenido.slice(0, 600))}${ult.contenido.length > 600 ? "…" : ""}</div>` : `<div class="empty">La IA todavía no guardó estrategias.</div>`;
+
+    const lista = filtro === "todas" ? estado.tareas : estado.tareas.filter((t) => t.estado === filtro);
+    $("#lTareas").innerHTML = lista.length ? ordenarTareas(lista).map((t) => filaTarea(t, true)).join("") : `<div class="empty">Nada por acá.</div>`;
+
+    $("#lObj").innerHTML = estado.objetivos.length ? estado.objetivos.map((o) => filaObj(o, true)).join("") : `<div class="empty">Sin objetivos todavía.</div>`;
+
+    // métricas: último valor y variación respecto al anterior
+    const porNombre = {};
+    estado.metricas.slice().sort((a, b) => a.fecha.localeCompare(b.fecha)).forEach((m) => (porNombre[m.metrica] ||= []).push(m));
+    const nombres = Object.keys(porNombre);
+    $("#metricasConocidas").innerHTML = nombres.map((n) => `<option value="${esc(n)}">`).join("");
+    $("#lMet").innerHTML = nombres.length ? `<table><thead><tr><th>Métrica</th><th>Último valor</th><th>Variación</th><th>Fecha</th><th>Registros</th></tr></thead><tbody>${
+      nombres.map((n) => {
+        const h = porNombre[n], u = h[h.length - 1], p = h[h.length - 2];
+        const d = p ? u.valor - p.valor : null;
+        return `<tr><td><b>${esc(n)}</b></td><td>${num(u.valor)} ${esc(u.unidad || "")}</td>
+          <td class="${d > 0 ? "up" : d < 0 ? "down" : ""}">${d === null ? "—" : (d > 0 ? "▲ +" : d < 0 ? "▼ " : "") + num(d)}</td>
+          <td>${fmtFecha(u.fecha)}</td><td>${h.length}</td></tr>`;
+      }).join("")}</tbody></table>` : `<div class="empty">Registrá números (socios activos, altas, bajas, facturación, ocupación…) para que la IA pueda analizarlos.</div>`;
+
+    $("#lNotas").innerHTML = estado.notas.length ? estado.notas.slice().reverse().map((n) => `<div class="card nota">
+      <div class="top"><span class="chip ${n.tipo}">${esc(n.tipo)}</span><b>${esc(n.titulo)}</b><button class="x" data-del-nota="${n.id}" aria-label="Eliminar">✕</button></div>
+      <div class="c">${esc(n.contenido)}</div><div class="muted" style="font-size:12px;margin-top:10px">${fmtFecha(n.fecha)}</div></div>`).join("")
+      : `<div class="card empty">Todavía no hay notas. Tocá “Armar plan del mes” para que la IA arme la primera estrategia.</div>`;
+  }
+
+  // ---- acciones manuales ----------------------------------------------
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-toggle]");
+    if (t) {
+      const x = estado.tareas.find((y) => y.id === t.dataset.toggle);
+      x.estado = x.estado === "hecha" ? "pendiente" : "hecha";
+      x.hecha_el = x.estado === "hecha" ? hoy() : undefined;
+      return guardar();
+    }
+    const d = e.target.closest("[data-del-tarea],[data-del-obj],[data-del-nota]");
+    if (d && confirm("¿Eliminar?")) {
+      if (d.dataset.delTarea) estado.tareas = estado.tareas.filter((y) => y.id !== d.dataset.delTarea);
+      if (d.dataset.delObj) estado.objetivos = estado.objetivos.filter((y) => y.id !== d.dataset.delObj);
+      if (d.dataset.delNota) estado.notas = estado.notas.filter((y) => y.id !== d.dataset.delNota);
+      return guardar();
+    }
+    const o = e.target.closest("[data-edit-obj]");
+    if (o) {
+      const obj = estado.objetivos.find((y) => y.id === o.dataset.editObj);
+      const v = prompt(`Avance actual de "${obj.titulo}" (meta ${obj.meta}):`, obj.actual ?? 0);
+      if (v !== null && !isNaN(parseFloat(v))) { obj.actual = parseFloat(v); guardar(); }
+    }
+  });
+  $("#tabsTareas").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    filtro = b.dataset.f;
+    document.querySelectorAll("#tabsTareas button").forEach((x) => x.classList.toggle("on", x === b));
+    render();
+  });
+  const datos = (f) => Object.fromEntries(new FormData(f).entries());
+  $("#fTarea").addEventListener("submit", (e) => {
+    e.preventDefault(); const d = datos(e.target);
+    estado.tareas.push({ id: id(), titulo: d.titulo, detalle: null, prioridad: d.prioridad, fecha_limite: d.fecha_limite || null, responsable: null, estado: "pendiente", creada: hoy(), origen: "manual" });
+    e.target.reset(); guardar();
+  });
+  $("#fObj").addEventListener("submit", (e) => {
+    e.preventDefault(); const d = datos(e.target);
+    estado.objetivos.push({ id: id(), titulo: d.titulo, meta: parseFloat(d.meta), actual: 0, unidad: d.unidad || null, fecha_limite: d.fecha_limite || null, creado: hoy() });
+    e.target.reset(); guardar();
+  });
+  $("#fMet").addEventListener("submit", (e) => {
+    e.preventDefault(); const d = datos(e.target);
+    estado.metricas.push({ id: id(), metrica: d.metrica.toLowerCase().trim(), valor: parseFloat(d.valor), unidad: d.unidad || null, fecha: d.fecha, nota: null });
+    e.target.reset(); e.target.fecha.value = hoy(); guardar();
+  });
+  $("#fMet").fecha.value = hoy();
+
+  $("#exportar").addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify({ estado, chat }, null, 2)], { type: "application/json" }));
+    a.download = `bast-ia-${hoy()}.json`; a.click();
+  });
+  $("#importarBtn").addEventListener("click", () => $("#importar").click());
+  $("#importar").addEventListener("change", async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text());
+      if (!d.estado) throw 0;
+      estado = Object.assign({ tareas: [], objetivos: [], metricas: [], notas: [] }, d.estado);
+      chat = Array.isArray(d.chat) ? d.chat : [];
+      escribir(K_CHAT, chat); guardar(); pintarChat();
+    } catch (err) { alert("El archivo no es un respaldo válido de BAST IA."); }
+    e.target.value = "";
+  });
+
+  // ---- chat ------------------------------------------------------------
+  function md(t) {
+    const lineas = esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").split("\n");
+    let html = "", enLista = false;
+    for (const l of lineas) {
+      const li = l.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)/);
+      if (li) { if (!enLista) { html += "<ul>"; enLista = true; } html += `<li>${li[1]}</li>`; continue; }
+      if (enLista) { html += "</ul>"; enLista = false; }
+      const h = l.match(/^#{1,4}\s+(.*)/);
+      if (h) html += `<h4>${h[1]}</h4>`;
+      else if (l.trim()) html += `<p>${l}</p>`;
+    }
+    return html + (enLista ? "</ul>" : "");
+  }
+  function burbuja(m) {
+    const d = document.createElement("div");
+    d.className = "m " + (m.role === "user" ? "yo" : "bot");
+    if (m.role === "user") d.textContent = m.content;
+    else d.innerHTML = md(m.content) + (m.cambios?.length ? `<div class="cambios">✓ ${m.cambios.map(esc).join("<br>✓ ")}</div>` : "");
+    $("#msgs").appendChild(d);
+    $("#msgs").scrollTop = $("#msgs").scrollHeight;
+    return d;
+  }
+  function pintarChat() {
+    $("#msgs").innerHTML = "";
+    if (!chat.length) burbuja({ role: "assistant", content: "¡Hola! Soy la IA de BAST. Puedo darte informes de progreso, ordenarte los pendientes, analizar tus números y armar estrategias. Contame cómo viene el negocio o elegí una opción de abajo." });
+    chat.forEach(burbuja);
+  }
+  $("#nuevaConv").addEventListener("click", () => { chat = []; escribir(K_CHAT, chat); pintarChat(); });
+
+  let ocupado = false;
+  async function preguntar(texto) {
+    texto = (texto || "").trim();
+    if (!texto || ocupado) return;
+    ocupado = true; $("#enviar").disabled = true;
+    const m = { role: "user", content: texto };
+    chat.push(m); burbuja(m); $("#txt").value = "";
+    const espera = burbuja({ role: "assistant", content: "" });
+    espera.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+    try {
+      const r = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-bast-clave": clave },
+        body: JSON.stringify({ modo: "negocio", mensajes: chat.map(({ role, content }) => ({ role, content })), estado }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (r.status === 401) { chat.pop(); espera.remove(); alert("La clave no es correcta."); return $("#salir").click(); }
+      if (!r.ok) throw new Error(data.error || "Error " + r.status);
+      if (data.estado) { estado = Object.assign(estado, data.estado); guardar(); }
+      const resp = { role: "assistant", content: data.respuesta || "(sin respuesta)", cambios: data.cambios || [] };
+      chat.push(resp); espera.remove(); burbuja(resp);
+      if (chat.length > 60) chat = chat.slice(-40);
+      escribir(K_CHAT, chat);
+    } catch (err) {
+      chat.pop();
+      espera.className = "m error";
+      espera.textContent = "No pude responder: " + err.message;
+    } finally {
+      ocupado = false; $("#enviar").disabled = false;
+    }
+  }
+  $("#fChat").addEventListener("submit", (e) => { e.preventDefault(); preguntar($("#txt").value); });
+  $("#txt").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); preguntar($("#txt").value); } });
+})();
+</script>
+</body>
+</html>
